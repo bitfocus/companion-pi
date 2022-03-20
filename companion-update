@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo "Must be run as root. Try sudo companion-update"
+    exit 1
+fi
+
+# stop companion
+systemctl stop companion
+
+# fetch new code
+cd /usr/local/src/companionpi
+git pull
+
+# do the update
+./update.sh
+
+# restart companion
+systemctl start companion

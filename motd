@@ -1,0 +1,14 @@
+The source code repository for this project can be found here:
+https://github.com/bitfocus/companion
+
+Full licensing information for Bitfocus Commpanion can be found by running 'companion-license' 
+in the terminal or visiting https://github.com/bitfocus/companion/blob/master/LICENSE.md in a web browser
+
+Any bugs, issues, or feature requests for the Companion software should be reported on the project's GitHub:
+https://github.com/bitfocus/companion/issues
+
+Companion should auto-start on this computer as soon as a viable network connection is detected.
+You can access the Companion Admin User Interface on port 8000 of this computer's IP address
+(i.e. http://192.1.1.2:8000).
+
+For more information on Companion specific commands you can run try running `companion-help`

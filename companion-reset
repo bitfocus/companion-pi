@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo "Must be run as root. Try sudo companion-reset"
+    exit 1
+fi
+
+function ask_yes_or_no() {
+    read -p "$1 ([y]es or [N]o): "
+    case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
+        y|yes) echo "yes" ;;
+        *)     echo "no" ;;
+    esac
+}
+
+echo "Are you sure you want to wipe the companion configuration?"
+if [[ "no" == $(ask_yes_or_no "") ]]
+then
+    echo "Abort."
+    exit 0
+fi
+
+# stop companion
+systemctl stop companion
+
+# wipe the config
+rm -Rf /home/companion/companion
+
+# restart companion
+systemctl start companion

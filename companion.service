@@ -1,0 +1,16 @@
+[Unit]
+Description=Bitfocus Companion
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=companion
+WorkingDirectory=/usr/local/src/companion
+ExecStart=/opt/fnm/aliases/default/bin/node /usr/local/src/companion/headless_ip.js 0.0.0.0
+Restart=on-failure
+KillSignal=SIGINT
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

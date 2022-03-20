@@ -1,0 +1,38 @@
+name: CompanionPi Build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build image
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: install packer
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install -y packer
+
+      - name: build image
+        run: |
+          sudo packer init companionpi.pkr.hcl
+          sudo packer build --var branch=${GITHUB_REF_NAME} companionpi.pkr.hcl
+
+      - name: rename image
+        run: |
+          cd output-companionpi
+          sudo mv image companionpi-test.img
+
+      # upload artifact
+      - name: Upload production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: companionpi
+          if-no-files-found: error
+          path: |
+            output-companionpi/*.img

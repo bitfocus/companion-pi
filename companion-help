@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo "To view the Companion License information run:"
+echo "  $ companion-license"
+echo ""
+
+echo "To stop/start/restart or check the status of Companion run:"
+echo "  $ sudo systemctl [start/stop/restart/status] companion"
+echo ""
+
+echo "To update companion run:"
+echo "  $ sudo companion-update"
+echo "and follow the prompts"
+echo ""
+
+echo "To reset the companion configuration run:"
+echo "  $ sudo companion-reset"
+echo "and follow the prompts"
+echo ""
+
