@@ -26,7 +26,7 @@ jobs:
       - name: compress image
         run: |
           cd output-companionpi
-          gzip image
+          sudo gzip image
 
       - name: Determine files to upload
         if: github.ref == 'refs/heads/main' # always publish for just the main branch
