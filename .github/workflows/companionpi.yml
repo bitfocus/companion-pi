@@ -21,7 +21,7 @@ jobs:
       - name: build image
         run: |
           sudo packer init companionpi.pkr.hcl
-          sudo packer build --var branch=${GITHUB_REF_NAME} companionpi.pkr.hcl
+          sudo packer build --var branch=master companionpi.pkr.hcl
 
       - name: rename image
         run: |
