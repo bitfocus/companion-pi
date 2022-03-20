@@ -29,7 +29,7 @@ jobs:
           gzip image
 
       - name: Determine files to upload
-        if: github.ref == 'refs/heads/master' # always publish for just the master branch
+        if: github.ref == 'refs/heads/main' # always publish for just the main branch
         id: filenames
         shell: bash
         run: |
