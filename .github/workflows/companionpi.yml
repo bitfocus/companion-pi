@@ -26,6 +26,12 @@ jobs:
       - name: compress image
         run: |
           cd output-companionpi
+
+          sudo apt-get install -y zerofree
+          device="$(sudo losetup --partscan --show --find image)"
+          sudo zerofree "${device}p2"
+          sudo losetup --detach "$device"
+          
           sudo gzip image
 
       - name: Determine files to upload
@@ -36,7 +42,7 @@ jobs:
           DATE=$(date +"%m-%d-%y")
 
           echo ::set-output name=sourcename::"output-companionpi/image.gz"
-          echo ::set-output name=targetname::"companionpi-${{ github.run_number }}-${DATE}.tar.gz"
+          echo ::set-output name=targetname::"companionpi-${{ github.run_number }}-${DATE}.img.gz"
 
       - name: Upload app
         if: ${{ steps.filenames.outputs.sourcename }}
