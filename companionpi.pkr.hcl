@@ -58,7 +58,7 @@ build {
 
       # clone the companionpi repository
       "git clone https://github.com/bitfocus/companionpi-builder.git /usr/local/src/companionpi",
-      "cd /usr/local/src/companion",
+      "cd /usr/local/src/companionpi",
 
       # clone the companion repository
       "git clone https://github.com/bitfocus/companion.git -b ${var.branch} /usr/local/src/companion",
