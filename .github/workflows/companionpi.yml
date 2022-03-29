@@ -21,7 +21,7 @@ jobs:
       - name: build image
         run: |
           sudo packer init companionpi.pkr.hcl
-          sudo packer build --var branch=master companionpi.pkr.hcl
+          sudo packer build --var branch=beta companionpi.pkr.hcl
 
       - name: compress image
         run: |
@@ -35,22 +35,30 @@ jobs:
           sudo gzip image
 
       - name: Determine files to upload
-        if: github.ref == 'refs/heads/main' # always publish for just the main branch
         id: filenames
         shell: bash
         run: |
           DATE=$(date +"%m-%d-%y")
+          VERSION="0.0.0"
 
           echo ::set-output name=sourcename::"output-companionpi/image.gz"
           echo ::set-output name=targetname::"companionpi-${{ github.run_number }}-${DATE}.img.gz"
+          echo ::set-output name=longversion::"${VERSION}+${COUNT}-${HASH}"
 
-      - name: Upload app
-        if: ${{ steps.filenames.outputs.sourcename }}
-        uses: ./.github/actions/s3-upload
+
+      - name: Upload build
+        uses: bitfocus/actions/upload-and-notify@main
         with:
+          long-version: ${{ steps.filenames.outputs.longversion }}
+          beta-branch: main # TODO - will this work correctly for this build scheme?
+
           source-filename: ${{ steps.filenames.outputs.sourcename }}
           destination-filename: ${{ steps.filenames.outputs.targetname }}
-          host: ${{ secrets.S3_HOST }}
-          bucket: ${{ secrets.S3_BUCKET }}
-          access-key: ${{ secrets.S3_KEY }}
-          secret-key: ${{ secrets.S3_SECRET }}
+          s3-host: ${{ secrets.S3_HOST }}
+          s3-bucket: ${{ secrets.S3_BUCKET }}/companion-pi
+          s3-access-key: ${{ secrets.S3_KEY }}
+          s3-secret-key: ${{ secrets.S3_SECRET }}
+
+          api-product: companion-pi
+          api-target: 'linux-img'
+          api-secret: ${{ secrets.BITFOCUS_API_PROJECT_SECRET }}
