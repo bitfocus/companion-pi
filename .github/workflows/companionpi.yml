@@ -32,7 +32,7 @@ jobs:
         id: info
         shell: bash
         run: |
-          DATE=$(date +"%m-%d-%y")
+          DATE=$(date +"%d-%m-%y")
 
           echo ::set-output name=sourcename::"output-companionpi/image.gz"
 
