@@ -10,7 +10,12 @@ eval "`fnm env`"
 
 # update companion soruce
 cd /usr/local/src/companion
-git pull
+git fetch --all
+GIT_BRANCH=$(git branch --show-current)
+if [[ "$GIT_BRANCH" != "" ]]; then
+    # only do a pull if on a branch
+    git pull
+fi
 
 # TODO - prompt for which branch to use
 
