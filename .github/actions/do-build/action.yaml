@@ -1,0 +1,37 @@
+name: 'Build image'
+description: 'Build image'
+inputs:
+  companion-ref:
+    description: 'Git tag/branch from the companion repository'
+    required: true
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: install packer
+      shell: bash
+      run: |
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install -y packer
+
+    - name: build image
+      shell: bash
+      run: |
+        sudo packer init companionpi.pkr.hcl
+        sudo packer build --var "branch=${{ inputs.companion-ref }}" companionpi.pkr.hcl
+
+    - name: compress image
+      shell: bash
+      run: |
+        cd output-companionpi
+
+        sudo apt-get install -y zerofree
+        device="$(sudo losetup --partscan --show --find image)"
+        sudo zerofree "${device}p2"
+        sudo losetup --detach "$device"
+        
+        sudo gzip image
