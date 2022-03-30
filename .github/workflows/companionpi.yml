@@ -25,6 +25,9 @@ jobs:
     name: build image
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
       - name: Determine build details
         id: info
         shell: bash
@@ -33,7 +36,7 @@ jobs:
 
           echo ::set-output name=sourcename::"output-companionpi/image.gz"
 
-          if [[ "${{ github.event_name }}" == "push" ]]
+          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" ]]
           then
             # Automatic beta build
             VERSION="0.0.0"
