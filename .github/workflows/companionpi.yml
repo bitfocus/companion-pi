@@ -46,10 +46,10 @@ jobs:
             echo ::set-output name=targetname::"companion-pi-beta-${{ github.run_number }}-${DATE}.img.gz"
           else
             # Manual stable build. We assume a semver tag was supplied
-            echo ::set-output name=version::"${{ github.event.inputs.environment }}+${{ github.run_number }}-${DATE}"
+            echo ::set-output name=version::"${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}"
             echo ::set-output name=branch::"stable"
-            echo ::set-output name=ref::"${{ github.event.inputs.environment }}"
-            echo ::set-output name=targetname::"companion-pi-stable-${{ github.event.inputs.environment }}-${DATE}.img.gz"
+            echo ::set-output name=ref::"${{ github.event.inputs.companion-ref }}"
+            echo ::set-output name=targetname::"companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.gz"
           fi
         
       - name: Do build
