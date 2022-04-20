@@ -18,6 +18,8 @@ on:
         description: Companion tag to build as new stable
         default: beta
         required: true
+  schedule:
+    - cron:  '0 0 * * SUN'
 
 jobs:
   build:
