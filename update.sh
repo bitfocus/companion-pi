@@ -32,6 +32,7 @@ yarn update
 cd /usr/local/src/companionpi
 cp 50-companion.rules /etc/udev/rules.d/
 udevadm control --reload-rules
+cp 090-companion_sudo /etc/sudoers.d/
 
 # update startup script
 cp companion.service /etc/systemd/system
