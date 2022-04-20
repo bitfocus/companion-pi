@@ -57,7 +57,7 @@ build {
       "eval \"`fnm env --shell bash`\"",
 
       # clone the companionpi repository
-      "git clone https://github.com/bitfocus/companionpi-builder.git /usr/local/src/companionpi",
+      "git clone https://github.com/bitfocus/companion-pi.git /usr/local/src/companionpi",
       "cd /usr/local/src/companionpi",
 
       # clone the companion repository
