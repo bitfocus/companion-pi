@@ -24,9 +24,22 @@ fnm use --install-if-missing
 fnm default $(fnm current)
 npm --unsafe-perm install -g yarn
 
+# make sure there is a swap file in case there is not enough memory
+SWAPFILE="/swapfile-upgrade"
+if [ ! -f "$SWAPFILE" ]; then
+    fallocate -l 2G $SWAPFILE
+    chmod 600 $SWAPFILE
+    mkswap $SWAPFILE
+fi
+swapon $SWAPFILE || true
+
 # install dependencies
 yarn config set network-timeout 100000 -g
+export NODE_OPTIONS=--max-old-space-size=8192 # some pi's run out of memory
 yarn update
+
+# swap is no longer needed
+swapoff $SWAPFILE
 
 # update some tooling
 cd /usr/local/src/companionpi

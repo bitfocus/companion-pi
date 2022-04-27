@@ -31,4 +31,4 @@ runs:
         sudo zerofree "${device}p2"
         sudo losetup --detach "$device"
         
-        sudo gzip image
+        sudo gzip -n image
