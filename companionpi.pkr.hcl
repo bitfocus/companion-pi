@@ -15,7 +15,7 @@ variable "branch" {
 source "arm-image" "companionpi" {
   iso_checksum              = "sha256:d694d2838018cf0d152fe81031dba83182cee79f785c033844b520d222ac12f5"
   iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip"
-  last_partition_extra_size = 4294967296
+  last_partition_extra_size = 6442450944
   qemu_binary               = "qemu-aarch64-static"
 }
 
