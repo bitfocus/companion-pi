@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     echo "Must be run as root. Try sudo companion-update"

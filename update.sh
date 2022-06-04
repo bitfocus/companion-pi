@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 # this is the bulk of the update script
 # It is a separate file, so that the freshly cloned copy is invoked, not the old copy
@@ -11,35 +12,53 @@ eval "`fnm env`"
 # update companion soruce
 cd /usr/local/src/companion
 git fetch --all
-GIT_BRANCH=$(git branch --show-current)
-if [[ "$GIT_BRANCH" != "" ]]; then
-    # only do a pull if on a branch
-    git pull
+
+# Run interactive version picker
+yarn --cwd "/usr/local/src/companionpi/update-prompt" install
+node "/usr/local/src/companionpi/update-prompt/main.js"
+
+# Get result
+SELECTED_REF=
+if [ -f /tmp/companion-version-selection ]; then
+    SELECTED_REF=$(cat /tmp/companion-version-selection)
+    rm /tmp/companion-version-selection 2&>/dev/null || true
 fi
 
-# TODO - prompt for which branch to use
+if [ -n "$SELECTED_REF" ]; then 
+    echo "Switching to $SELECTED_REF"
 
-# update the node version
-fnm use --install-if-missing
-fnm default $(fnm current)
-npm --unsafe-perm install -g yarn
+    # switch to the new ref
+    git checkout $SELECTED_REF
+    GIT_BRANCH=$(git branch --show-current)
+    if [[ "$GIT_BRANCH" != "" ]]; then
+        # only do a pull if on a branch
+        git pull
+    fi
 
-# make sure there is a swap file in case there is not enough memory
-SWAPFILE="/swapfile-upgrade"
-if [ ! -f "$SWAPFILE" ]; then
-    fallocate -l 2G $SWAPFILE
-    chmod 600 $SWAPFILE
-    mkswap $SWAPFILE
+    # update the node version
+    fnm use --install-if-missing
+    fnm default $(fnm current)
+    npm --unsafe-perm install -g yarn
+
+    # make sure there is a swap file in case there is not enough memory
+    SWAPFILE="/swapfile-upgrade"
+    if [ ! -f "$SWAPFILE" ]; then
+        fallocate -l 2G $SWAPFILE
+        chmod 600 $SWAPFILE
+        mkswap $SWAPFILE
+    fi
+    swapon $SWAPFILE || true
+
+    # install dependencies
+    yarn config set network-timeout 100000 -g
+    export NODE_OPTIONS=--max-old-space-size=8192 # some pi's run out of memory
+    yarn update
+
+    # swap is no longer needed
+    swapoff $SWAPFILE || true
+else
+    echo "Skipping update"
 fi
-swapon $SWAPFILE || true
-
-# install dependencies
-yarn config set network-timeout 100000 -g
-export NODE_OPTIONS=--max-old-space-size=8192 # some pi's run out of memory
-yarn update
-
-# swap is no longer needed
-swapoff $SWAPFILE || true
 
 # update some tooling
 cd /usr/local/src/companionpi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "To view the Companion License information run:"
 echo "  $ companion-license"
