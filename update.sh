@@ -13,15 +13,18 @@ eval "`fnm env`"
 cd /usr/local/src/companion
 git fetch --all
 
-# Run interactive version picker
-yarn --cwd "/usr/local/src/companionpi/update-prompt" install
-node "/usr/local/src/companionpi/update-prompt/main.js"
+# The version can be the first argument, or we can prompt for it
+SELECTED_REF=$1
+if [ -z "$SELECTED_REF" ]; then
+    # Run interactive version picker
+    yarn --cwd "/usr/local/src/companionpi/update-prompt" install
+    node "/usr/local/src/companionpi/update-prompt/main.js"
 
-# Get result
-SELECTED_REF=
-if [ -f /tmp/companion-version-selection ]; then
-    SELECTED_REF=$(cat /tmp/companion-version-selection)
-    rm /tmp/companion-version-selection 2&>/dev/null || true
+    # Get result
+    if [ -f /tmp/companion-version-selection ]; then
+        SELECTED_REF=$(cat /tmp/companion-version-selection)
+        rm /tmp/companion-version-selection 2&>/dev/null || true
+    fi
 fi
 
 if [ -n "$SELECTED_REF" ]; then 

@@ -69,6 +69,9 @@ build {
       # run the update script
       "./update.sh ${var.branch}",
 
+      # install update script dependencies, as they were ignored
+      "yarn --cwd \"/usr/local/src/companionpi/update-prompt\" install",
+
       # enable start on boot
       "systemctl enable companion"
     ]
