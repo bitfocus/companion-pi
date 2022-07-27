@@ -28,6 +28,9 @@ if [ -z "$SELECTED_REF" ]; then
 fi
 
 if [ -n "$SELECTED_REF" ]; then 
+    # companion is not safe to be started
+    touch /usr/local/src/companion/UPDATE_IN_PROGRESS
+
     echo "Switching to $SELECTED_REF"
 
     # switch to the new ref
@@ -59,6 +62,10 @@ if [ -n "$SELECTED_REF" ]; then
 
     # swap is no longer needed
     swapoff $SWAPFILE || true
+
+    # companion is safe to be started
+    rm /usr/local/src/companion/UPDATE_IN_PROGRESS || true
+
 else
     echo "Skipping update"
 fi

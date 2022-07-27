@@ -7,8 +7,7 @@ Wants=network-online.target
 Type=simple
 User=companion
 Environment=COMPANION_USE_HIDRAW=1
-WorkingDirectory=/usr/local/src/companion
-ExecStart=/opt/fnm/aliases/default/bin/node /usr/local/src/companion/headless_ip.js 0.0.0.0
+ExecStart=/usr/local/src/companionpi/launch.sh
 Restart=on-failure
 KillSignal=SIGINT
 TimeoutStopSec=60
