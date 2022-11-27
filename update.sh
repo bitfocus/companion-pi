@@ -82,6 +82,9 @@ adduser -q companion dialout
 cp companion.service /etc/systemd/system
 systemctl daemon-reload
 
+# add udevd systemd override allowing network connectivity for curl triggering surfaces update
+cp /usr/local/src/companionpi/systemd-udevd-override.conf /usr/lib/systemd/system/systemd-udevd.service.d/override.conf
+
 # install some scripts
 ln -s -f /usr/local/src/companionpi/companion-license /usr/local/bin/companion-license
 ln -s -f /usr/local/src/companionpi/companion-help /usr/local/bin/companion-help
