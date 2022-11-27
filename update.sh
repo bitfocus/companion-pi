@@ -83,6 +83,7 @@ cp companion.service /etc/systemd/system
 systemctl daemon-reload
 
 # add udevd systemd override allowing network connectivity for curl triggering surfaces update
+mkdir -p /usr/lib/systemd/system/systemd-udevd.service.d/
 cp /usr/local/src/companionpi/systemd-udevd-override.conf /usr/lib/systemd/system/systemd-udevd.service.d/override.conf
 
 # install some scripts
