@@ -4,7 +4,8 @@ const { execSync } = require("child_process");
 const fs = require('fs');
 
 const ALLOWED_VERSIONS = '^2.2.0'
-const ALLOWED_BRANCHES = ['beta']
+// const ALLOWED_BRANCHES = ['beta']
+const ALLOWED_BRANCHES = [] // 'beta' is disabled for now, as it is not compatible with companionpi
 
 const currentTag = execSync(`git name-rev --name-only --tags --no-undefined HEAD 2>/dev/null | sed -n 's/^\\([^^~]\\{1,\\}\\)\\(\\^0\\)\\{0,1\\}$/\\1/p'`).toString().trim()
 const currentBranch = execSync(`git branch --show-current`).toString().trim()
@@ -54,6 +55,12 @@ async function runPrompt() {
                 message: 'What git ref?'
             }
         ])
+        
+        if (answer.ref === 'beta' || answer.ref === 'develop') {
+            console.error(`It is not possible to use ${answer.ref} on CompanionPi currently. It is too experimental!`)
+            process.exit(1)
+        }
+
         const confirm = await inquirer.prompt([
             {
                 type: 'confirm',
