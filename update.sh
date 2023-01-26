@@ -10,9 +10,9 @@ export PATH=/opt/fnm:$PATH
 eval "`fnm env`"
 
 # ensure the module dev folder exists
-if [ ! -d /opt/companion-module-dev ] {
+if [ ! -d /opt/companion-module-dev ]; then
     mkdir /opt/companion-module-dev
-}
+fi
 
 # check if the conversion to v3 is required
 if [ -d "/usr/local/src/companion" ]; then
