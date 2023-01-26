@@ -11,6 +11,10 @@ variable "branch" {
   type    = string
   default = "master"
 }
+variable "pibranch" {
+  type    = string
+  default = "master"
+}
 
 source "arm-image" "companionpi" {
   iso_checksum              = "sha256:72c773781a0a57160eb3fa8bb2a927642fe60c3af62bc980827057bcecb7b98b"
@@ -57,7 +61,7 @@ build {
       "eval \"`fnm env --shell bash`\"",
 
       # clone the companionpi repository
-      "git clone https://github.com/bitfocus/companion-pi.git -b feat/v3 /usr/local/src/companionpi",
+      "git clone https://github.com/bitfocus/companion-pi.git -b ${var.pibranch} /usr/local/src/companionpi",
       "cd /usr/local/src/companionpi",
 
       # configure git for future updates
