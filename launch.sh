@@ -12,5 +12,5 @@ if [ -d /usr/local/src/companion ]; then
     /opt/fnm/aliases/default/bin/node headless_ip.js 0.0.0.0
 else
     # run it!
-    /opt/companion/node-runtime/bin/node /opt/companion/main.js
+    /opt/companion/node-runtime/bin/node /opt/companion/main.js --extra-module-path /opt/companion-module-dev
 fi

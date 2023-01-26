@@ -9,6 +9,11 @@ export FNM_DIR=/opt/fnm
 export PATH=/opt/fnm:$PATH
 eval "`fnm env`"
 
+# ensure the module dev folder exists
+if [ ! -d /opt/companion-module-dev ] {
+    mkdir /opt/companion-module-dev
+}
+
 # check if the conversion to v3 is required
 if [ -d "/usr/local/src/companion" ]; then
     echo "In order to proceed, your Companion-Pi installation must be converted to make it compatible with Companion 3.0"
@@ -19,6 +24,7 @@ if [ -d "/usr/local/src/companion" ]; then
 
     echo ""
     echo "A backup of your configuration will be made for you, which you should take a copy of in case you wish to downgrade"
+    echo "Any modules you have installed locally will be deleted, as they are not compatible without updates"
     echo ""
 
     function ask_yes_or_no() {
