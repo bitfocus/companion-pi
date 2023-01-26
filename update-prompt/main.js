@@ -36,6 +36,50 @@ async function getLatestBuildsForBranch(branch, targetCount) {
     return result
 }
 
+async function latestOfType(type) {
+    const candidates = await getLatestBuildsForBranch(type, 1)
+    const latestBuild = candidates[0]
+    if (latestBuild) {
+        console.log(`Selected ${type}: ${latestBuild.name}`)
+        fs.writeFileSync('/tmp/companion-version-selection', latestBuild.uri)
+    } else {
+        console.error('No beta build was found!')
+    }
+}
+async function chooseOfType(type) {
+    const candidates = await getLatestBuildsForBranch(type, 10)
+
+    if (candidates.length === 0) {
+        console.error(`No ${type} build was found!`)
+    } else {
+
+        const selectedBuild = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'ref',
+                message: 'Which version do you want? ',
+                choices: [
+                    ...candidates.map(c => c.name),
+                    'cancel'
+                ],
+            }
+        ])
+    
+        if (selectedBuild.ref && selectedBuild.ref !== 'cancel') {
+            const build = candidates.find(c => c.name === selectedBuild.ref)
+            if (build) {
+                console.log(`Selected ${type}: ${build.name}`)
+                fs.writeFileSync('/tmp/companion-version-selection', build.uri)
+            } else {
+                console.error('Invalid selection!')
+            }
+        } else {
+            console.error('No version was selected!')
+        }
+    }
+}
+
+
 async function runPrompt() {
     console.log('Warning: Downgrading to an older version can cause issues with the database not being compatible')
 
@@ -94,85 +138,18 @@ async function runPrompt() {
 
         console.error('No version was selected!')
     } else if (answer.ref === 'latest beta') {
-        const candidates = await getLatestBuildsForBranch('beta', 1)
-        const latestBuild = candidates[0]
-        if (latestBuild) {
-            console.log(`Selected beta: ${latestBuild.name}`)
-            fs.writeFileSync('/tmp/companion-version-selection', latestBuild.uri)
-        } else {
-            console.error('No beta build was found!')
-        }
+        latestOfType('beta')
     } else if (answer.ref === 'latest stable') {
-        const candidates = await getLatestBuildsForBranch('stable', 1)
-        const latestBuild = candidates[0]
-        if (latestBuild) {
-            console.log(`Selected stable: ${latestBuild.name}`)
-            fs.writeFileSync('/tmp/companion-version-selection', latestBuild.uri)
-        } else {
-            console.error('No beta build was found!')
-        }
+        latestOfType('stable')
     } else if (answer.ref === 'specific beta') {
-        const candidates = await getLatestBuildsForBranch('beta', 10)
-
-        if (candidates.length === 0) {
-            console.error('No beta build was found!')
-        } else {
-
-            const selectedBuild = await inquirer.prompt([
-                {
-                    type: 'list',
-                    name: 'ref',
-                    message: 'Which version do you want? ',
-                    choices: [
-                        ...candidates.map(c => c.name),
-                        'cancel'
-                    ],
-                }
-            ])
-        
-            if (selectedBuild.ref && selectedBuild.ref !== 'cancel') {
-                const build = candidates.find(c => c.name === selectedBuild.ref)
-                if (build) {
-                    console.log(`Selected beta: ${build.name}`)
-                    fs.writeFileSync('/tmp/companion-version-selection', build.uri)
-                } else {
-                    console.error('Invalid selection!')
-                }
-            } else {
-                console.error('No version was selected!')
-            }
-        }
+        chooseOfType('beta')
     } else if (answer.ref === 'specific stable') {
-        const candidates = await getLatestBuildsForBranch('stable', 10)
-
-        if (candidates.length === 0) {
-            console.error('No stable build was found!')
-        } else {
-            const selectedBuild = await inquirer.prompt([
-                {
-                    type: 'list',
-                    name: 'ref',
-                    message: 'Which version do you want? ',
-                    choices: [
-                        ...candidates.map(c => c.name),
-                        'cancel'
-                    ],
-                }
-            ])
-        
-            if (selectedBuild.ref && selectedBuild.ref !== 'cancel') {
-                const build = candidates.find(c => c.name === selectedBuild.ref)
-                if (build) {
-                    console.log(`Selected stable: ${build.name}`)
-                    fs.writeFileSync('/tmp/companion-version-selection', build.uri)
-                } else {
-                    console.error('Invalid selection!')
-                }
-            } else {
-                console.error('No version was selected!')
-            }
-        }
+        chooseOfType('stable')
     }
 }
 
-runPrompt()
+if (process.argv[2]) {
+    latestOfType(process.argv[2])
+} else {
+    runPrompt()
+}
