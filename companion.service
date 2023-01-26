@@ -6,7 +6,6 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=companion
-Environment=COMPANION_USE_HIDRAW=1
 ExecStart=/usr/local/src/companionpi/launch.sh
 Restart=on-failure
 KillSignal=SIGINT

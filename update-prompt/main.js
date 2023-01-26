@@ -1,33 +1,9 @@
 const semver = require('semver');
 const inquirer = require('inquirer');
-const { execSync } = require("child_process");
 const fs = require('fs');
 const axios = require('axios')
-const moment = require('moment')
 
-const ALLOWED_VERSIONS = '^2.2.0'
-// const ALLOWED_BRANCHES = ['beta']
-const ALLOWED_BRANCHES = [] // 'beta' is disabled for now, as it is not compatible with companionpi
-
-// TODO - replace this concept
-const currentTag = execSync(`git name-rev --name-only --tags --no-undefined HEAD 2>/dev/null | sed -n 's/^\\([^^~]\\{1,\\}\\)\\(\\^0\\)\\{0,1\\}$/\\1/p'`).toString().trim()
-const currentBranch = execSync(`git branch --show-current`).toString().trim()
-
-const allTags = execSync(`git tag -l`).toString()
-
-const allowedTags = []
-for (const tag of allTags.split('\n')) {
-    const tag2 = tag.trim()
-    if (tag2) {
-        try {
-            if (semver.satisfies(tag2, ALLOWED_VERSIONS))
-                allowedTags.push(tag2)
-        } catch (e) {
-            // Not a semver tag, so ignore
-        }
-    }
-}
-allowedTags.sort(semver.rcompare)
+const ALLOWED_VERSIONS = '^3.0.0-0'
 
 async function getLatestBuildsForBranch(branch, targetCount) {
     targetCount *= 10 // HACK until the api changes
@@ -43,11 +19,17 @@ async function getLatestBuildsForBranch(branch, targetCount) {
     const result = []
     for (const pkg of data.data.packages) {
         if (pkg.target === target) {
-            result.push({
-                name: pkg.version,
-                uri: pkg.uri,
-                published: new Date(pkg.published)
-            })
+            try {
+                if (semver.satisfies(pkg.version, ALLOWED_VERSIONS)) {
+                    result.push({
+                        name: pkg.version,
+                        uri: pkg.uri,
+                        published: new Date(pkg.published)
+                    })
+                }
+            } catch (e) {
+                // Not a semver tag, so ignore
+            }
         }
     }
 
@@ -59,13 +41,14 @@ async function runPrompt() {
 
     let isOnBeta = true
 
-    if (currentBranch) {
-        console.log(`You are currently on branch: ${currentBranch}`)
-    } else if (currentTag) {
-        console.log(`You are currently on release: ${currentTag}`)
-    } else {
-        console.log('Unable to determine your current version')
-    }
+    // TODO - restore this
+    // if (currentBranch) {
+    //     console.log(`You are currently on branch: ${currentBranch}`)
+    // } else if (currentTag) {
+    //     console.log(`You are currently on release: ${currentTag}`)
+    // } else {
+    //     console.log('Unable to determine your current version')
+    // }
 
     const answer = await inquirer.prompt([
         {
