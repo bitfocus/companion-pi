@@ -44,7 +44,6 @@ if [ -d "/usr/local/src/companion" ]; then
 
     echo "Cleaning up old installation"
     rm -Rf /usr/local/src/companion
-    exit 1
 fi
 
 # update the node version
