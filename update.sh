@@ -9,8 +9,41 @@ export FNM_DIR=/opt/fnm
 export PATH=/opt/fnm:$PATH
 eval "`fnm env`"
 
-# The version can be the first argument, or we can prompt for it
-SELECTED_BRANCH=$1
+# check if the conversion to v3 is required
+if [ -d "/usr/local/src/companion" ]; then
+    echo "In order to proceed, your Companion-Pi installation must be converted to make it compatible with Companion v3.0"
+    echo -e "\e[1;31;40mThis cannot be undone\e[0m"
+
+    echo ""
+    echo "3.0 has not been released as stable, so doing this conversion now will result in running a beta version"
+
+    echo ""
+    echo "A backup of your configuration will be made for you, which you should take a copy of in case you wish to downgrade"
+    echo ""
+
+    function ask_yes_or_no() {
+        read -p "$1 ([y]es or [N]o): "
+        case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
+            y|yes) echo "yes" ;;
+            *)     echo "no" ;;
+        esac
+    }
+
+    echo "Are you sure you want to upgrade your installation?"
+    if [[ "no" == $(ask_yes_or_no "") ]]
+    then
+        echo "Abort."
+        exit 0
+    fi
+
+    # TODO - make copy of config
+    echo "Backing up configuration"
+    # zip /home/pi/companion-config-backup.zip /home/companion/companion
+
+    echo "Cleaning up old installation"
+    # rm -Rf /usr/local/src/companion
+    exit 1
+fi
 
 # update the node version
 fnm use --install-if-missing
