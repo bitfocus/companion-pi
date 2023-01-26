@@ -1,5 +1,7 @@
 name: CompanionPi Build
 
+permissions: {}
+
 on:
   push:
   # Allows you to run this workflow manually from the Actions tab
@@ -61,6 +63,8 @@ jobs:
         uses: ./.github/actions/do-build
         with:
           companion-ref: ${{ steps.info.outputs.ref }}
+        secrets:
+          PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build
         uses: bitfocus/actions/upload-and-notify-for-branch@main
