@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Determine build details
         id: info
@@ -43,22 +43,22 @@ jobs:
         run: |
           DATE=$(date +"%d-%m-%y")
 
-          echo ::set-output name=sourcename::"output-companionpi/image.gz"
+          echo "sourcename=output-companionpi/image.gz" >> $GITHUB_OUTPUT
 
           if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" ]]
           then
             # Automatic beta build
             VERSION="0.0.0"
-            echo ::set-output name=version::"${VERSION}+${{ github.run_number }}-${DATE}"
-            echo ::set-output name=branch::"beta"
-            echo ::set-output name=ref::"beta"
-            echo ::set-output name=targetname::"companion-pi-beta-${{ github.run_number }}-${DATE}.img.gz"
+            echo "version=${VERSION}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
+            echo "branch=beta" >> $GITHUB_OUTPUT
+            echo "ref=beta" >> $GITHUB_OUTPUT
+            echo "targetname=companion-pi-beta-${{ github.run_number }}-${DATE}.img.gz" >> $GITHUB_OUTPUT
           else
             # Manual stable build. We assume a semver tag was supplied
-            echo ::set-output name=version::"${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}"
-            echo ::set-output name=branch::"stable"
-            echo ::set-output name=ref::"${{ github.event.inputs.companion-ref }}"
-            echo ::set-output name=targetname::"companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.gz"
+            echo "version=${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
+            echo "branch=stable" >> $GITHUB_OUTPUT
+            echo "ref=${{ github.event.inputs.companion-ref }}" >> $GITHUB_OUTPUT
+            echo "targetname=companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.gz" >> $GITHUB_OUTPUT
           fi
         
       - name: Do build
