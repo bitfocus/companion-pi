@@ -13,7 +13,7 @@ variable "branch" {
 }
 variable "pibranch" {
   type    = string
-  default = "master"
+  default = "main"
 }
 
 source "arm-image" "companionpi" {
