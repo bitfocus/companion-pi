@@ -5,6 +5,13 @@ const axios = require('axios')
 
 const ALLOWED_VERSIONS = '^3.0.0-0'
 
+let currentVersion
+try {
+    currentVersion = fs.readFileSync('/opt/companion/BUILD').toString().trim()
+} catch (e) {
+    // Assume none installed
+}
+
 async function getLatestBuildsForBranch(branch, targetCount) {
     targetCount *= 10 // HACK until the api changes
     const data = await axios.get(`https://api.bitfocus.io/v1/product/companion/packages?branch=${branch}&limit=${targetCount}`)
@@ -40,8 +47,13 @@ async function latestOfType(type) {
     const candidates = await getLatestBuildsForBranch(type, 1)
     const latestBuild = candidates[0]
     if (latestBuild) {
-        console.log(`Selected ${type}: ${latestBuild.name}`)
-        fs.writeFileSync('/tmp/companion-version-selection', latestBuild.uri)
+        if (latestBuild.name === currentVersion) {
+            console.log(`The latest build of ${type} (${latestBuild.name}) is already installed`)
+
+        } else {
+            console.log(`Selected ${type}: ${latestBuild.name}`)
+            fs.writeFileSync('/tmp/companion-version-selection', latestBuild.uri)
+        }
     } else {
         console.error('No beta build was found!')
     }
@@ -66,6 +78,20 @@ async function chooseOfType(type) {
         ])
     
         if (selectedBuild.ref && selectedBuild.ref !== 'cancel') {
+            if (selectedBuild.ref === currentVersion) {
+                const confirm = await inquirer.prompt([
+                    {
+                        type: 'confirm',
+                        name: 'confirm',
+                        message: `Build "${currentVersion}" is already installed. Do you wish to reinstall it?`
+                    }
+                ])
+                if (!confirm.confirm) {
+                    return
+                }
+            }
+
+            
             const build = candidates.find(c => c.name === selectedBuild.ref)
             if (build) {
                 console.log(`Selected ${type}: ${build.name}`)
