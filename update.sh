@@ -26,7 +26,7 @@ node "/usr/local/src/companionpi/update-prompt/main.js" $1
 # Get result
 if [ -f /tmp/companion-version-selection ]; then
     SELECTED_URL=$(cat /tmp/companion-version-selection)
-    rm /tmp/companion-version-selection 2&>/dev/null || true
+    rm -f /tmp/companion-version-selection
 fi
 
 if [ -n "$SELECTED_URL" ]; then 
@@ -35,13 +35,15 @@ if [ -n "$SELECTED_URL" ]; then
     # download it
     wget "$SELECTED_URL" -O /tmp/companion-update.tar.gz -q  --show-progress
 
+    # extract download
     echo "Extracting..."
-    rm -R /tmp/companion-update || true
+    rm -R -f /tmp/companion-update
     mkdir /tmp/companion-update
     tar -xzf /tmp/companion-update.tar.gz --strip-components=1 -C /tmp/companion-update
     rm /tmp/companion-update.tar.gz
 
-    rm -R /opt/companion || true
+    # copy across the useful files
+    rm -R -f /opt/companion
     mv /tmp/companion-update/resources /opt/companion
     rm -R /tmp/companion-update
 
