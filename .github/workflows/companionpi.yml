@@ -65,7 +65,6 @@ jobs:
         uses: ./.github/actions/do-build
         with:
           companion-ref: ${{ steps.info.outputs.ref }}
-        secrets:
           PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build

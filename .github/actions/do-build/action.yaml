@@ -5,7 +5,6 @@ inputs:
     description: 'Git tag/branch from the companion repository'
     required: true
     default: ''
-secrets:
   PACKER_GITHUB_API_TOKEN:
     description: ''
     required: false
@@ -26,7 +25,7 @@ runs:
         sudo packer init companionpi.pkr.hcl
         sudo packer build --var "branch=${{ inputs.companion-ref }}" companionpi.pkr.hcl
       env:
-        PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_API_TOKEN }}
+        PACKER_GITHUB_API_TOKEN: ${{ env.PACKER_GITHUB_API_TOKEN }}
 
     - name: compress image
       shell: bash
