@@ -36,13 +36,14 @@ if [ -d "/usr/local/src/companion" ]; then
         exit 0
     fi
 
-    # TODO - make copy of config
-    echo "Backing up configuration"
-    zip /home/pi/companion-config-backup.zip -R /home/companion/companion
+    # make copy of config
+    echo "Backing up configuration to /home/pi/companion-config-backup.zip"
+    rm -f /home/pi/companion-config-backup.zip
+    zip /home/pi/companion-config-backup.zip -r /home/companion/companion
     chown pi:pi /home/pi/companion-config-backup.zip
 
     echo "Cleaning up old installation"
-    # rm -Rf /usr/local/src/companion
+    rm -Rf /usr/local/src/companion
     exit 1
 fi
 
