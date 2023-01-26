@@ -30,45 +30,22 @@ if [ -f /tmp/companion-version-selection ]; then
 fi
 
 if [ -n "$SELECTED_URL" ]; then 
-    # # companion is not safe to be started
-    # touch /usr/local/src/companion/UPDATE_IN_PROGRESS
-
     echo "Installing from $SELECTED_URL"
 
     # download it
-    wget "$SELECTED_URL" -o /tmp/companion-update.tar.gz
+    wget "$SELECTED_URL" -O /tmp/companion-update.tar.gz -q  --show-progress
 
-    
+    echo "Extracting..."
+    rm -R /tmp/companion-update || true
+    mkdir /tmp/companion-update
+    tar -xzf /tmp/companion-update.tar.gz --strip-components=1 -C /tmp/companion-update
+    rm /tmp/companion-update.tar.gz
 
-    # # switch to the new ref
-    # git checkout $SELECTED_REF
-    # GIT_BRANCH=$(git branch --show-current)
-    # if [[ "$GIT_BRANCH" != "" ]]; then
-    #     # only do a pull if on a branch
-    #     git pull
-    # fi
+    rm -R /opt/companion || true
+    mv /tmp/companion-update/resources /opt/companion
+    rm -R /tmp/companion-update
 
-
-    # # make sure there is a swap file in case there is not enough memory
-    # SWAPFILE="/swapfile-upgrade"
-    # if [ ! -f "$SWAPFILE" ]; then
-    #     fallocate -l 2G $SWAPFILE
-    #     chmod 600 $SWAPFILE
-    #     mkswap $SWAPFILE
-    # fi
-    # swapon $SWAPFILE || true
-
-    # # install dependencies
-    # yarn config set network-timeout 100000 -g
-    # export NODE_OPTIONS=--max-old-space-size=8192 # some pi's run out of memory
-    # yarn update
-
-    # # swap is no longer needed
-    # swapoff $SWAPFILE || true
-
-    # # companion is safe to be started
-    # rm /usr/local/src/companion/UPDATE_IN_PROGRESS || true
-
+    echo "Finishing"
 else
     echo "Skipping update"
 fi
