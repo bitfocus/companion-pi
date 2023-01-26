@@ -13,9 +13,9 @@ variable "branch" {
 }
 
 source "arm-image" "companionpi" {
-  iso_checksum              = "sha256:d694d2838018cf0d152fe81031dba83182cee79f785c033844b520d222ac12f5"
-  iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip"
-  last_partition_extra_size = 6442450944
+  iso_checksum              = "sha256:72c773781a0a57160eb3fa8bb2a927642fe60c3af62bc980827057bcecb7b98b"
+  iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-09-26/2022-09-22-raspios-bullseye-arm64-lite.img.xz"
+  last_partition_extra_size = 2147483648
   qemu_binary               = "qemu-aarch64-static"
 }
 
@@ -57,11 +57,11 @@ build {
       "eval \"`fnm env --shell bash`\"",
 
       # clone the companionpi repository
-      "git clone https://github.com/bitfocus/companion-pi.git /usr/local/src/companionpi",
+      "git clone https://github.com/bitfocus/companion-pi.git -b feat/v3 /usr/local/src/companionpi",
       "cd /usr/local/src/companionpi",
 
-      # clone the companion repository
-      "git clone https://github.com/bitfocus/companion.git -b ${var.branch} /usr/local/src/companion",
+      # # clone the companion repository
+      # "git clone https://github.com/bitfocus/companion.git -b ${var.branch} /usr/local/src/companion",
 
       # configure git for future updates
       "git config --global pull.rebase false",
@@ -82,7 +82,7 @@ build {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} su companion -c {{ .Path }}"
     inline_shebang  = "/bin/bash -e"
     inline = [
-      "cd /usr/local/src/companion",
+      # "cd /usr/local/src/companion",
 
       # add the fnm node to this users path
       "echo \"export PATH=/opt/fnm/aliases/default/bin:\\$PATH\" >> ~/.bashrc"
