@@ -111,6 +111,8 @@ async function runPrompt() {
 
     let isOnBeta = true
 
+    console.log(`You are currently on "${currentVersion || 'Unknown'}"`)
+
     // TODO - restore this
     // if (currentBranch) {
     //     console.log(`You are currently on branch: ${currentBranch}`)
