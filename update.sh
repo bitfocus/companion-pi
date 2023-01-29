@@ -53,14 +53,14 @@ if [ -d "/usr/local/src/companion" ]; then
 fi
 
 # update the node version
-fnm use --install-if-missing
+fnm use --install-if-missing --silent-if-unchanged
 fnm default $(fnm current)
-npm --unsafe-perm install -g yarn
+npm --unsafe-perm install -g yarn &>/dev/null
 
 # TODO - cleanup old versions?
 
 # Run interactive version picker
-yarn --cwd "/usr/local/src/companionpi/update-prompt" install
+yarn --cwd "/usr/local/src/companionpi/update-prompt" --silent install
 node "/usr/local/src/companionpi/update-prompt/main.js" $1
 
 # Get result
@@ -95,10 +95,15 @@ fi
 # update some tooling
 cd /usr/local/src/companionpi
 cp 50-companion.rules /etc/udev/rules.d/
-udevadm control --reload-rules
+udevadm control --reload-rules || true
 cp 090-companion_sudo /etc/sudoers.d/
-adduser -q companion gpio
-adduser -q companion dialout
+if [ $(getent group gpio) ]; then
+  adduser -q companion gpio
+fi
+if [ $(getent group dialout) ]; then
+  adduser -q companion dialout
+fi
+
 
 # update startup script
 cp companion.service /etc/systemd/system
