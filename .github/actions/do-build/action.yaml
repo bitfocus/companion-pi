@@ -25,7 +25,7 @@ runs:
         sudo packer init companionpi.pkr.hcl
         sudo packer build --var "branch=${{ inputs.companion-ref }}" companionpi.pkr.hcl
       env:
-        PACKER_GITHUB_API_TOKEN: ${{ env.PACKER_GITHUB_API_TOKEN }}
+        PACKER_GITHUB_API_TOKEN: ${{ inputs.PACKER_GITHUB_API_TOKEN }}
 
     - name: compress image
       shell: bash
