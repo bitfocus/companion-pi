@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export COMPANION_IN_SYSTEMD=1
+
 if [ -d /usr/local/src/companion ]; then
     cd /usr/local/src/companion
 
