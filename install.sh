@@ -27,7 +27,7 @@ export FNM_DIR=/opt/fnm
 echo "export FNM_DIR=/opt/fnm" >> /root/.bashrc
 curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir /opt/fnm
 export PATH=/opt/fnm:$PATH
-eval "`fnm env --shell bash`",
+eval "`fnm env --shell bash`"
 
 # clone the companionpi repository
 git clone https://github.com/bitfocus/companion-pi.git -b $COMPANIONPI_BRANCH /usr/local/src/companionpi

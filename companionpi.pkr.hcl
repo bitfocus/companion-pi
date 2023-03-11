@@ -26,6 +26,11 @@ source "arm-image" "companionpi" {
 build {
   sources = ["source.arm-image.companionpi"]
 
+  provisioner "file" {
+    source = "install.sh"
+    destination = "/tmp/install.sh"
+  }
+
   provisioner "shell" {
     #system setup
     inline = [
@@ -47,7 +52,8 @@ build {
       # run the script
       "export COMPANIONPI_BRANCH=${var.pibranch}",
       "export COMPANION_BRANCH=${var.branch}",
-      "./install.sh"
+      "chmod +x /tmp/install.sh",
+      "/tmp/install.sh"
     ]
   }
 
