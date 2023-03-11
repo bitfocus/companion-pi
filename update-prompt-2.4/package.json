@@ -1,0 +1,10 @@
+{
+  "name": "update-prompt",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "semver": "^7.3.7"
+  }
+}
