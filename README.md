@@ -5,6 +5,7 @@ CompanionPi is a prebuilt image for the Raspberry Pi 4B, setup to run [Bitfocus 
 This repository houses the tooling for building the images, only issues relating to the image building/updating should be reported here.
 
 This also works on other headless Debian or Ubuntu machines.
+
 ## Companion Pi
 
 Prebiult images can be found on the [Bitfocus website](https://bitfocus.io/companion)
