@@ -45,7 +45,9 @@ build {
     inline_shebang  = "/bin/bash -e"
     inline = [
       # run the script
-      "./install.sh ${var.pibranch} ${var.branch}"
+      "export COMPANIONPI_BRANCH=${var.pibranch}",
+      "export COMPANION_BRANCH=${var.branch}",
+      "./install.sh"
     ]
   }
 

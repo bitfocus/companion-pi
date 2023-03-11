@@ -4,9 +4,25 @@ CompanionPi is a prebuilt image for the Raspberry Pi 4B, setup to run [Bitfocus 
 
 This repository houses the tooling for building the images, only issues relating to the image building/updating should be reported here.
 
+This also works on other headless Debian or Ubuntu machines.
+## Companion Pi
+
 Prebiult images can be found on the [Bitfocus website](https://bitfocus.io/companion)
 
 Note: This has been written for arm64 images, and is not tested or supported on anything below a 4B. We do not recommend running it on anything lower, but you can follow the [manual install instuctions](https://github.com/bitfocus/companion/wiki/Installation) if you are sure you want to.
+
+## Other Debian/Ubuntu
+
+No images are provided for this, but the process has been written to be a single script.
+
+As root, run the following:
+```
+curl https://raw.githubusercontent.com/bitfocus/companion-pi/main/install.sh | sh
+```
+
+After this, you can use `sudo companion-update` to change the version it has installed.
+
+Note: This script will create a new user called `companion`, which Companion will be run as and will own the configuration.
 
 ### Development
 
