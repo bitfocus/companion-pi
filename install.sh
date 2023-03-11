@@ -51,4 +51,4 @@ systemctl enable companion
 echo "export PATH=/opt/fnm/aliases/default/bin:\$PATH" >> /home/companion/.bashrc
 
 echo "Companion is installed!"
-echo "You can start it with `sudo systemctl start companion` or `sudo companion-update`"
+echo "You can start it with \"sudo systemctl start companion\" or \"sudo companion-update\""
