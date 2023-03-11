@@ -53,7 +53,6 @@ if [ -d "/usr/local/src/companion" ]; then
 fi
 
 # update the node version
-fnm ls-remote
 fnm use --install-if-missing --silent-if-unchanged
 fnm default $(fnm current)
 npm --unsafe-perm install -g yarn &>/dev/null
