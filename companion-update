@@ -18,3 +18,5 @@ git pull -q
 
 # restart companion
 systemctl start companion
+
+echo "Update is complete"

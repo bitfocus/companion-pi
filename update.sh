@@ -170,7 +170,6 @@ if [ $(getent group dialout) ]; then
   adduser -q companion dialout
 fi
 
-
 # update startup script
 cp companion.service /etc/systemd/system
 systemctl daemon-reload
