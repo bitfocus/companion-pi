@@ -160,7 +160,9 @@ fi
 cd /usr/local/src/companionpi
 cp 50-companion.rules /etc/udev/rules.d/
 udevadm control --reload-rules || true
-cp 090-companion_sudo /etc/sudoers.d/
+if [ -d "/etc/sudoers.d" ]; then
+    cp 090-companion_sudo /etc/sudoers.d/
+fi
 if [ $(getent group gpio) ]; then
   adduser -q companion gpio
 fi
