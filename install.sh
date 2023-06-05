@@ -45,10 +45,16 @@ yarn --cwd "/usr/local/src/companionpi/update-prompt" install
 # enable start on boot
 systemctl enable companion
 
-
 # add the fnm node to this users path
 # TODO - verify permissions
 echo "export PATH=/opt/fnm/aliases/default/bin:\$PATH" >> /home/companion/.bashrc
+
+# check that a build of companion was installed
+if [ ! -d "/opt/companion" ] 
+then
+    echo "No Companion build was installed!\nIt should be possible to recover from this with \"sudo companion-update\"" 
+    exit 9999 # die with error code 9999
+fi
 
 echo "Companion is installed!"
 echo "You can start it with \"sudo systemctl start companion\" or \"sudo companion-update\""
