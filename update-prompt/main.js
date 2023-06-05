@@ -43,16 +43,16 @@ async function getLatestBuildsForBranch(branch, targetCount) {
     return result
 }
 
-async function latestOfType(type) {
+async function selectBuildOfType(type, targetBuild) {
     const candidates = await getLatestBuildsForBranch(type, 1)
-    const latestBuild = candidates[0]
-    if (latestBuild) {
-        if (latestBuild.name === currentVersion) {
-            console.log(`The latest build of ${type} (${latestBuild.name}) is already installed`)
+    const selectedBuild = targetBuild ? candidates.find(c => c.version == targetBuild): candidates[0]
+    if (selectedBuild) {
+        if (selectedBuild.name === currentVersion) {
+            console.log(`The latest build of ${type} (${selectedBuild.name}) is already installed`)
 
         } else {
-            console.log(`Selected ${type}: ${latestBuild.name}`)
-            fs.writeFileSync('/tmp/companion-version-selection', latestBuild.uri)
+            console.log(`Selected ${type}: ${selectedBuild.name}`)
+            fs.writeFileSync('/tmp/companion-version-selection', selectedBuild.uri)
         }
     } else {
         console.error('No beta build was found!')
@@ -166,9 +166,9 @@ async function runPrompt() {
 
         console.error('No version was selected!')
     } else if (answer.ref === 'latest beta') {
-        latestOfType('beta')
+        selectBuildOfType('beta')
     } else if (answer.ref === 'latest stable') {
-        latestOfType('stable')
+        selectBuildOfType('stable')
     } else if (answer.ref === 'specific beta') {
         chooseOfType('beta')
     } else if (answer.ref === 'specific stable') {
@@ -177,7 +177,7 @@ async function runPrompt() {
 }
 
 if (process.argv[2]) {
-    latestOfType(process.argv[2])
+    selectBuildOfType(process.argv[2], process.argv[3])
 } else {
     runPrompt()
 }

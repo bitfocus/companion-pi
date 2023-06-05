@@ -11,7 +11,7 @@ if [ $(/usr/bin/id -u) -ne 0 ]; then
 fi
 
 COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
-COMPANION_BRANCH="${COMPANION_BRANCH:-beta}"
+COMPANION_BUILD="${COMPANION_BUILD:-beta}"
 
 # add a system user
 adduser --disabled-password companion --gecos ""
@@ -37,7 +37,11 @@ cd /usr/local/src/companionpi
 git config --global pull.rebase false
 
 # run the update script
-./update.sh $COMPANION_BRANCH
+if [ "$COMPANION_BUILD" == "beta" ] || [ "$COMPANION_BUILD" == "experimental" ]; then
+    ./update.sh beta
+else
+    ./update.sh stable "$COMPANION_BUILD"
+fi
 
 # install update script dependencies, as they were ignored
 yarn --cwd "/usr/local/src/companionpi/update-prompt" install

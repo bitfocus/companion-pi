@@ -7,9 +7,9 @@ packer {
   }
 }
 
-variable "branch" {
+variable "build" {
   type    = string
-  default = "master"
+  default = "beta"
 }
 variable "pibranch" {
   type    = string
@@ -51,7 +51,7 @@ build {
     inline = [
       # run the script
       "export COMPANIONPI_BRANCH=${var.pibranch}",
-      "export COMPANION_BRANCH=${var.branch}",
+      "export COMPANION_BUILD=${var.build}",
       "chmod +x /tmp/install.sh",
       "/tmp/install.sh"
     ]
