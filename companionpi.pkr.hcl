@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     arm-image = {
-      version = "0.2.5"
+      version = "0.2.7"
       source  = "github.com/solo-io/arm-image"
     }
   }
@@ -17,8 +17,8 @@ variable "pibranch" {
 }
 
 source "arm-image" "companionpi" {
-  iso_checksum              = "sha256:72c773781a0a57160eb3fa8bb2a927642fe60c3af62bc980827057bcecb7b98b"
-  iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-09-26/2022-09-22-raspios-bullseye-arm64-lite.img.xz"
+  iso_checksum              = "sha256:e7c0c89db32d457298fbe93195e9d11e3e6b4eb9e0683a7beb1598ea39a0a7aa"
+  iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64-lite.img.xz"
   last_partition_extra_size = 2147483648
   qemu_binary               = "qemu-aarch64-static"
 }
