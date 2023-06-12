@@ -25,6 +25,15 @@ After this, you can use `sudo companion-update` to change the version it has ins
 
 Note: This script will create a new user called `companion`, which Companion will be run as and will own the configuration.
 
+### v2.4.2
+
+If you want to install v2.4.2, the script from above can be used with a couple of extra steps
+
+* `sudo git clone https://github.com/bitfocus/companion.git -b stable-2.4 stable-2.4 /usr/local/src/companion`
+* `sudo companion-update` 
+
+Be aware that the update command will take many minutes to run
+
 ### Development
 
 Warning: This has only been tested on linux, but it should work wherever packer is supported.
