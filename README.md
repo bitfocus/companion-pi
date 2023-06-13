@@ -18,7 +18,7 @@ No images are provided for this, but the process has been written to be a single
 
 As root, run the following:
 ```
-curl https://raw.githubusercontent.com/bitfocus/companion-pi/main/install.sh | sh
+curl https://raw.githubusercontent.com/bitfocus/companion-pi/main/install.sh | bash
 ```
 
 After this, you can use `sudo companion-update` to change the version it has installed.

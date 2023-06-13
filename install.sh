@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+CURRENT_ARCH=$(dpkg --print-architecture)
+if [[ "$CURRENT_ARCH=" != "x64" && "$CURRENT_ARCH=" != "arm64" ]]; then
+    echo "$CURRENT_ARCH is not a supported cpu architecture for running Companion."
+    echo "If you are running on an arm device (such as a Raspberry Pi), make sure to use an arm64 image."
+    exit 1
+fi
+
 echo "This will attempt to install Companion as a system service on this device."
 echo "It is designed to be run on headless servers, but can be used on desktop machines if you are happy to not have the tray icon."
 echo "A user called 'companion' will be created to run the service, and various scripts will be installed to manage the service"
