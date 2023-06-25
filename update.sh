@@ -170,6 +170,13 @@ if [ $(getent group dialout) ]; then
   adduser -q companion dialout
 fi
 
+# if neither old or new config direcoty exists, create it. This is to work around a bug in 3.0.0-rc2
+if [ ! -d "/home/companion/.config/companion-nodejs" ]; then
+    if [ ! -d "/home/companion/companion" ]; then
+        su companion -c "mkdir -p /home/companion/.config/companion-nodejs"
+    fi
+fi
+
 # update startup script
 cp companion.service /etc/systemd/system
 systemctl daemon-reload
