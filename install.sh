@@ -17,7 +17,8 @@ if [ $(/usr/bin/id -u) -ne 0 ]; then
     exit 1
 fi
 
-# Install a specific stable build
+# Install a specific stable build. It is advised to not use this, as attempting to install a build that doesn't
+# exist can leave your system in a broken state that needs fixing manually
 COMPANION_BUILD="${COMPANION_BUILD:-beta}"
 # Development only: Allow building using a testing branch of this updater
 COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
