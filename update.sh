@@ -124,7 +124,7 @@ else
 
     # Run interactive version picker
     yarn --cwd "/usr/local/src/companionpi/update-prompt" --silent install
-    node "/usr/local/src/companionpi/update-prompt/main.js" $1
+    node "/usr/local/src/companionpi/update-prompt/main.js" $1 $2
 
     # Get result
     if [ -f /tmp/companion-version-selection ]; then

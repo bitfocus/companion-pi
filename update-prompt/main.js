@@ -45,7 +45,7 @@ async function getLatestBuildsForBranch(branch, targetCount) {
 
 async function selectBuildOfType(type, targetBuild) {
     const candidates = await getLatestBuildsForBranch(type, 1)
-    const selectedBuild = targetBuild ? candidates.find(c => c.version == targetBuild): candidates[0]
+    const selectedBuild = targetBuild ? candidates.find(c => c.version == targetBuild || c.name == targetBuild): candidates[0]
     if (selectedBuild) {
         if (selectedBuild.name === currentVersion) {
             console.log(`The latest build of ${type} (${selectedBuild.name}) is already installed`)
@@ -55,7 +55,7 @@ async function selectBuildOfType(type, targetBuild) {
             fs.writeFileSync('/tmp/companion-version-selection', selectedBuild.uri)
         }
     } else {
-        console.error('No beta build was found!')
+        console.error(`No matching ${type} build was found!`)
     }
 }
 async function chooseOfType(type) {

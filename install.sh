@@ -17,8 +17,10 @@ if [ $(/usr/bin/id -u) -ne 0 ]; then
     exit 1
 fi
 
-COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
+# Install a specific stable build
 COMPANION_BUILD="${COMPANION_BUILD:-beta}"
+# Development only: Allow building using a testing branch of this updater
+COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
 
 # add a system user
 adduser --disabled-password companion --gecos ""
