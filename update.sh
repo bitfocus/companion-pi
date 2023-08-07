@@ -170,6 +170,15 @@ if [ $(getent group dialout) ]; then
   adduser -q companion dialout
 fi
 
+# ensure some dependencies are installed
+ensure_installed() {
+  if ! dpkg --verify "$1" 2>/dev/null; then
+    # Future: batch the installs, if there are multiple
+    apt-get install $1
+  fi
+}
+ensure_installed "libfontconfig1"
+
 # if neither old or new config direcoty exists, create it. This is to work around a bug in 3.0.0-rc2
 if [ ! -d "/home/companion/.config/companion-nodejs" ]; then
     if [ ! -d "/home/companion/companion" ]; then
