@@ -171,13 +171,38 @@ if [ $(getent group dialout) ]; then
 fi
 
 # ensure some dependencies are installed
-ensure_installed() {
-  if ! dpkg --verify "$1" 2>/dev/null; then
-    # Future: batch the installs, if there are multiple
-    apt-get install $1
-  fi
+ensure_dependencies_installed() {
+    : '
+    Description:
+        Ensures that the given list of dependencies are installed on the system.
+
+    Parameters:
+        $@ - An array of package names to be checked and installed if missing.
+
+    Outputs:
+        Installation messages and potential errors if a package is missing.
+
+    Example Use:
+        ensure_dependencies_installed "libfontconfig1" "another_package" "yet_another_package"
+    '
+
+    local dependencies=("$@")  # Convert arguments into an array
+    local to_install=()  # Array to hold packages that need to be installed
+
+    for package in "${dependencies[@]}"; do
+        if ! dpkg -l | grep -q "^ii  $package "; then
+            # If the package is not verified, add it to the list of packages to be installed
+            to_install+=("$package")
+        fi
+    done
+
+    # If there are packages to install, do it in a single apt-get call
+    if [[ ${#to_install[@]} -ne 0 ]]; then
+        apt-get install "${to_install[@]}"
+    fi
 }
-ensure_installed "libfontconfig1"
+
+ensure_dependencies_installed "libfontconfig1"
 
 # if neither old or new config direcoty exists, create it. This is to work around a bug in 3.0.0-rc2
 if [ ! -d "/home/companion/.config/companion-nodejs" ]; then
