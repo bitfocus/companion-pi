@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [ ! "$BASH_VERSION" ] ; then
+    echo "You must use bash to run this script. If running this script from curl, make sure the final word is 'bash'" 1>&2
+    exit 1
+fi
+
 CURRENT_ARCH=$(dpkg --print-architecture)
 if [[ "$CURRENT_ARCH" != "x64" && "$CURRENT_ARCH" != "amd64" && "$CURRENT_ARCH" != "arm64" ]]; then
     echo "$CURRENT_ARCH is not a supported cpu architecture for running Companion."
