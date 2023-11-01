@@ -17,8 +17,8 @@ variable "pibranch" {
 }
 
 source "arm-image" "companionpi" {
-  iso_checksum              = "sha256:bf982e56b0374712d93e185780d121e3f5c3d5e33052a95f72f9aed468d58fa7"
-  iso_url                   = "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64-lite.img.xz"
+  iso_checksum              = "sha256:26ef887212da53d31422b7e7ae3dbc3e21d09f996e69cbb44cc2edf9e8c3a5c9"
+  iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-10-10/2023-10-10-raspios-bookworm-arm64-lite.img.xz"
   last_partition_extra_size = 2147483648
   qemu_binary               = "qemu-aarch64-static"
 }
