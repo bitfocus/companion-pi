@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "inquirer": "^8.2.4",
-    "semver": "^7.5.2"
+    "inquirer": "^8.2.6",
+    "semver": "^7.5.4"
   }
 }
