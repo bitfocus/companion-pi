@@ -1,7 +1,8 @@
-const semver = require('semver');
-const inquirer = require('inquirer');
-const fs = require('fs');
-const axios = require('axios')
+// @ts-check
+import semver from 'semver'
+import inquirer from 'inquirer'
+import fs from 'fs'
+import axios from 'axios'
 
 const ALLOWED_VERSIONS = '^3.0.0-0'
 
@@ -45,7 +46,7 @@ async function getLatestBuildsForBranch(branch, targetCount) {
 
 async function selectBuildOfType(type, targetBuild) {
     const candidates = await getLatestBuildsForBranch(type, 1)
-    const selectedBuild = targetBuild ? candidates.find(c => c.version == targetBuild || c.name == targetBuild): candidates[0]
+    const selectedBuild = targetBuild ? candidates.find(c => c.name == targetBuild): candidates[0]
     if (selectedBuild) {
         if (selectedBuild.name === currentVersion) {
             console.log(`The latest build of ${type} (${selectedBuild.name}) is already installed`)
