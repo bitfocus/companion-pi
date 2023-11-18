@@ -1,0 +1,1 @@
+This lets you run Companion on a Raspberry Pi by providing a prebuilt image, or tooling which allows you to install Companion to the SBC (single board computer) or other linux machine of your choosing.

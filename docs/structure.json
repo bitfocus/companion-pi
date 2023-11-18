@@ -1,0 +1,30 @@
+[
+	{	
+		"label": "Getting started",
+		"file": "1_welcome.md",
+		"children": [
+            {
+				"label": "System Requirements",
+				"file": "1_gettingstarted/requirements.md"
+			},
+			{
+				"label": "Choosing a Pi",
+				"file": "1_gettingstarted/choosing_a_pi.md"
+			}
+		]
+	},
+    {	
+		"label": "Using the Pi Image",
+		"file": "2_using_the_image.md",
+		"children": [
+            
+		]
+	},
+    {	
+		"label": "Manual Install",
+		"file": "3_manual_install.md",
+		"children": [
+            
+		]
+	}
+]
