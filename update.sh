@@ -148,6 +148,7 @@ else
         # copy across the useful files
         rm -R -f /opt/companion
         mv /tmp/companion-update/resources /opt/companion
+        mv /tmp/companion-update/*.rules /opt/companion/
         rm -R /tmp/companion-update
 
         echo "Finishing"
@@ -158,8 +159,18 @@ fi
 
 # update some tooling
 cd /usr/local/src/companionpi
-cp 50-companion.rules /etc/udev/rules.d/
+
+# copy the best option for udev rules
+if [ -f "/opt/companion/50-companion-headless.rules" ]; then
+    cp /opt/companion/50-companion-headless.rules /etc/udev/rules.d/50-companion.rules
+elif [ -f "/opt/companion/50-companion.rules" ]; then
+    cp /opt/companion/50-companion.rules /etc/udev/rules.d/50-companion.rules
+else
+    # fallback to the ones in this repository
+    cp 50-companion.rules /etc/udev/rules.d/
+fi
 udevadm control --reload-rules || true
+
 if [ -d "/etc/sudoers.d" ]; then
     cp 090-companion_sudo /etc/sudoers.d/
 fi
