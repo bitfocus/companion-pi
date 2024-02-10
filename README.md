@@ -27,6 +27,9 @@ Note: This script will create a new user called `companion`, which Companion wil
 
 ### v2.4.2
 
+It used to be possible to install v2.4.2, but this now has issues which cause the build to fail. This is not trivial to resolve, and is not something we support doing
+
+
 If you want to install v2.4.2, the script from above can be used with a couple of extra steps
 
 * `sudo git clone https://github.com/bitfocus/companion.git -b stable-2.4 stable-2.4 /usr/local/src/companion`
