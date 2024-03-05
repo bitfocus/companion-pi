@@ -175,10 +175,13 @@ if [ -d "/etc/sudoers.d" ]; then
     cp 090-companion_sudo /etc/sudoers.d/
 fi
 if [ $(getent group gpio) ]; then
-  adduser -q companion gpio
+  adduser -q companion gpio # for rpi-gpio
 fi
 if [ $(getent group dialout) ]; then
-  adduser -q companion dialout
+  adduser -q companion dialout # for serial based surfaces
+fi
+if [ $(getent group audio) ]; then
+  adduser -q companion audio # for generic-midi
 fi
 
 # ensure some dependencies are installed
@@ -188,7 +191,8 @@ ensure_installed() {
     apt-get install $1
   fi
 }
-ensure_installed "libfontconfig1"
+ensure_installed "libfontconfig1" # for the new canvas in 3.2
+ensure_installed "libasound2" # for generic-midi
 
 # if neither old or new config direcoty exists, create it. This is to work around a bug in 3.0.0-rc2
 if [ ! -d "/home/companion/.config/companion-nodejs" ]; then
