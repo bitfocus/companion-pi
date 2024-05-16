@@ -17,6 +17,7 @@ Note: This has been written for arm64 images, and is not tested or supported on 
 No images are provided for this, but the process has been written to be a single script.
 
 As root, run the following:
+
 ```
 curl https://raw.githubusercontent.com/bitfocus/companion-pi/main/install.sh | bash
 ```
@@ -29,11 +30,10 @@ Note: This script will create a new user called `companion`, which Companion wil
 
 It used to be possible to install v2.4.2, but this now has issues which cause the build to fail. This is not trivial to resolve, and is not something we support doing
 
-
 If you want to install v2.4.2, the script from above can be used with a couple of extra steps
 
-* `sudo git clone https://github.com/bitfocus/companion.git -b stable-2.4 stable-2.4 /usr/local/src/companion`
-* `sudo companion-update` 
+- `sudo git clone https://github.com/bitfocus/companion.git -b stable-2.4 stable-2.4 /usr/local/src/companion`
+- `sudo companion-update`
 
 Be aware that the update command will take many minutes to run
 
@@ -45,6 +45,6 @@ This repository utilises [packer](https://www.packer.io/) to build images, using
 
 After installing packer, set it up for this project: `packer init companionpi.pkr.hcl`.
 
-You can then perform the build with `packer build --var branch=master companionpi.pkr.hcl`. Be aware that this can be very slow, due to the cpu architecture emulation.
+You can then perform the build with `packer build --var pibranch=main companionpi.pkr.hcl`. Be aware that this can be very slow, due to the cpu architecture emulation.
 
 Once complete, the file `output-companionpi/image` can be written to an sd card and launched on a pi
