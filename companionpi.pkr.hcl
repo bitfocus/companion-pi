@@ -18,7 +18,7 @@ variable "pibranch" {
 
 source "arm-image" "companionpi" {
   iso_checksum              = "sha256:4fa99737265ac338a9ed0643f502246b97b928e5dfffa92939242e26e290638d"
-  iso_url                   = https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-03-15/2024-03-15-raspios-bookworm-armhf-lite.img.xz"
+  iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-03-15/2024-03-15-raspios-bookworm-armhf-lite.img.xz"
   last_partition_extra_size = 2147483648
   qemu_binary               = "qemu-aarch64-static"
 }
