@@ -28,23 +28,24 @@ COMPANION_BUILD="${COMPANION_BUILD:-beta}"
 # Development only: Allow building using a testing branch of this updater
 COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
 
-# add a system user
-adduser --disabled-password companion --gecos ""
-
 # install some dependencies
 apt-get update
-apt-get install -y git zip unzip curl libusb-1.0-0-dev libudev-dev
+apt-get install -yq git zip unzip curl libusb-1.0-0-dev libudev-dev adduser wget
 apt-get clean
+
+# add a system user, if the user doesn't already exist
+id -u companion &>/dev/null || adduser --disabled-password companion --gecos ""
 
 # install fnm to manage node version
 # we do this to /opt/fnm, so that the companion user can use the same installation
 export FNM_DIR=/opt/fnm
 echo "export FNM_DIR=/opt/fnm" >> /root/.bashrc
-curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir /opt/fnm
+curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir /opt/fnm &>/dev/null
 export PATH=/opt/fnm:$PATH
 eval "`fnm env --shell bash`"
 
 # clone the companionpi repository
+rm -R /usr/local/src/companionpi
 git clone https://github.com/bitfocus/companion-pi.git -b $COMPANIONPI_BRANCH /usr/local/src/companionpi
 cd /usr/local/src/companionpi
 
