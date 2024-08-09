@@ -161,15 +161,19 @@ fi
 cd /usr/local/src/companionpi
 
 # copy the best option for udev rules
-if [ -f "/opt/companion/50-companion-headless.rules" ]; then
-    cp /opt/companion/50-companion-headless.rules /etc/udev/rules.d/50-companion.rules
-elif [ -f "/opt/companion/50-companion.rules" ]; then
-    cp /opt/companion/50-companion.rules /etc/udev/rules.d/50-companion.rules
+if [ -d "/etc/udev/rules.d/" ]; then
+    if [ -f "/opt/companion/50-companion-headless.rules" ]; then
+        cp /opt/companion/50-companion-headless.rules /etc/udev/rules.d/50-companion.rules
+    elif [ -f "/opt/companion/50-companion.rules" ]; then
+        cp /opt/companion/50-companion.rules /etc/udev/rules.d/50-companion.rules
+    else
+        # fallback to the ones in this repository
+        cp 50-companion.rules /etc/udev/rules.d/
+    fi
+    udevadm control --reload-rules || true
 else
-    # fallback to the ones in this repository
-    cp 50-companion.rules /etc/udev/rules.d/
+    echo "Skipping installing of udev rules, as /etc/udev/rules.d/ does not exist"
 fi
-udevadm control --reload-rules || true
 
 if [ -d "/etc/sudoers.d" ]; then
     cp 090-companion_sudo /etc/sudoers.d/
