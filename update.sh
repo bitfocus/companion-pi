@@ -196,7 +196,7 @@ ensure_installed() {
   fi
 }
 ensure_installed "libfontconfig1" # for the new canvas in 3.2
-if apt-get --simulate -qq install libasound264t &>/dev/null; then
+if apt-get --simulate -qq install libasound2 &>/dev/null; then
     ensure_installed "libasound2" # for generic-midi
 else
     # ubuntu 24
