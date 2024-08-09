@@ -1,23 +1,35 @@
-name: 'Build image'
-description: 'Build image'
+name: "Build image"
+description: "Build image"
 inputs:
   companion-ref:
-    description: 'Git tag/branch from the companion repository'
+    description: "Git tag/branch from the companion repository"
     required: true
-    default: ''
+    default: ""
   PACKER_GITHUB_API_TOKEN:
-    description: ''
+    description: ""
     required: false
-    default: ''
+    default: ""
+env:
+  PACKER_CACHE_DIR: /tmp/packer_cache
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: install packer
       shell: bash
+      id: install-packer
       run: |
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install -y packer
+
+        CACHE_KEY=$(grep iso_checksum companionpi.pkr.hcl)
+        echo "CACHE_KEY=${CACHE_KEY}" >> "$GITHUB_OUTPUT"
+
+    - name: Restore image cache
+      uses: actions/cache@v4
+      with:
+        path: /tmp/packer_cache
+        key: ${{ steps.install-packet.CACHE_KEY }}
 
     - name: build image
       shell: bash
@@ -36,5 +48,5 @@ runs:
         device="$(sudo losetup --partscan --show --find image)"
         sudo zerofree "${device}p2"
         sudo losetup --detach "$device"
-        
+
         sudo gzip -n image
