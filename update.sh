@@ -196,9 +196,14 @@ ensure_installed() {
   fi
 }
 ensure_installed "libfontconfig1" # for the new canvas in 3.2
-ensure_installed "libasound2" # for generic-midi
+if apt-get --simulate -qq install libasound264t &>/dev/null; then
+    ensure_installed "libasound2" # for generic-midi
+else
+    # ubuntu 24
+    ensure_installed "libasound2t64" # for generic-midi
+fi
 
-# if neither old or new config direcoty exists, create it. This is to work around a bug in 3.0.0-rc2
+# if neither old or new config directory exists, create it. This is to work around a bug in 3.0.0-rc2
 if [ ! -d "/home/companion/.config/companion-nodejs" ]; then
     if [ ! -d "/home/companion/companion" ]; then
         su companion -c "mkdir -p /home/companion/.config/companion-nodejs"
