@@ -29,7 +29,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/packer_cache
-        key: ${{ steps.install-packet.CACHE_KEY }}
+        key: ${{ steps.install-packer.CACHE_KEY }}
 
     - name: build image
       shell: bash
