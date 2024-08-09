@@ -45,7 +45,7 @@ export PATH=/opt/fnm:$PATH
 eval "`fnm env --shell bash`"
 
 # clone the companionpi repository
-rm -R /usr/local/src/companionpi
+rm -R /usr/local/src/companionpi || true
 git clone https://github.com/bitfocus/companion-pi.git -b $COMPANIONPI_BRANCH /usr/local/src/companionpi
 cd /usr/local/src/companionpi
 
