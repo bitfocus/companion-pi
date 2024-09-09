@@ -13,5 +13,12 @@ if [ -d /usr/local/src/companion ]; then
 else
     # run it!
     cd /opt/companion
-    /opt/companion/node-runtime/bin/node /opt/companion/main.js --extra-module-path /opt/companion-module-dev
+
+    # node binary path could be different since v3.5
+    NODE_EXE=/opt/companion/node-runtime/bin/node
+    if ! [ -d /opt/companion/node-runtime ]; then
+        NODE_EXE=/opt/companion/node-runtimes/main/bin/node
+    fi
+
+    $NODE_EXE /opt/companion/main.js --extra-module-path /opt/companion-module-dev
 fi
