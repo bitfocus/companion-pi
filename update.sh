@@ -192,7 +192,7 @@ fi
 ensure_installed() {
   if ! dpkg --verify "$1" 2>/dev/null; then
     # Future: batch the installs, if there are multiple
-    apt-get install -y $1
+    apt-get install -qq -y $1
   fi
 }
 ensure_installed "libfontconfig1" # for the new canvas in 3.2
