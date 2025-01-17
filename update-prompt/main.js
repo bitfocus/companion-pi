@@ -13,13 +13,13 @@ try {
 }
 
 async function getLatestBuildsForBranch(branch, targetCount) {
-    targetCount *= 10 // HACK until the api changes
-    const rawData = await fetch(`https://api.bitfocus.io/v1/product/companion/packages?branch=${branch}&limit=${targetCount}`)
-    const data = await rawData.json()
-
-    // TODO - make sure this is durable
+    // This is a bit fragile, but is good enough
     let target = `${process.platform}-${process.arch}-tgz`
     if (target === 'linux-x64-tgz') target = 'linux-tgz'
+
+    targetCount *= 10 // HACK until the api changes
+    const rawData = await fetch(`https://api.bitfocus.io/v1/product/companion/packages?branch=${branch}&limit=${targetCount}&target=${target}`)
+    const data = await rawData.json()
 
     // console.log('searching for', target, 'in', data.packages)
 
