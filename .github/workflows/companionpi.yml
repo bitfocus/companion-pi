@@ -30,7 +30,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     name: build image
 
     steps:
