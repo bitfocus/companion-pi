@@ -5,6 +5,7 @@
   "type": "module",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^22.10.7",
     "inquirer": "^12.3.2",
     "semver": "^7.6.3"
   },
