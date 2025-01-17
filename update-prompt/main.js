@@ -17,7 +17,6 @@ async function getLatestBuildsForBranch(branch, targetCount) {
     let target = `${process.platform}-${process.arch}-tgz`
     if (target === 'linux-x64-tgz') target = 'linux-tgz'
 
-    targetCount *= 10 // HACK until the api changes
     const rawData = await fetch(`https://api.bitfocus.io/v1/product/companion/packages?branch=${branch}&limit=${targetCount}&target=${target}`)
     const data = await rawData.json()
 
