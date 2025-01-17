@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.1",
+    "axios": "^1.7.4",
     "inquirer": "^9.2.12",
     "semver": "^7.5.4"
   }
