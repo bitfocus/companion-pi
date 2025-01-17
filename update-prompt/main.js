@@ -2,7 +2,6 @@
 import semver from 'semver'
 import inquirer from 'inquirer'
 import fs from 'fs'
-import axios from 'axios'
 
 const ALLOWED_VERSIONS = '^3.0.0-0'
 
@@ -15,17 +14,18 @@ try {
 
 async function getLatestBuildsForBranch(branch, targetCount) {
     targetCount *= 10 // HACK until the api changes
-    const data = await axios.get(`https://api.bitfocus.io/v1/product/companion/packages?branch=${branch}&limit=${targetCount}`)
+    const rawData = await fetch(`https://api.bitfocus.io/v1/product/companion/packages?branch=${branch}&limit=${targetCount}`)
+    const data = await rawData.json()
 
     // TODO - make sure this is durable
     let target = `${process.platform}-${process.arch}-tgz`
     if (target === 'linux-x64-tgz') target = 'linux-tgz'
 
-    // console.log('searching for', target, 'in', data.data.packages)
+    // console.log('searching for', target, 'in', data.packages)
 
     // assume the builds are sorted by date already
     const result = []
-    for (const pkg of data.data.packages) {
+    for (const pkg of data.packages) {
         if (pkg.target === target) {
             try {
                 if (semver.satisfies(pkg.version, ALLOWED_VERSIONS)) {
