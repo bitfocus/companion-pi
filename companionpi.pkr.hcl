@@ -20,7 +20,7 @@ source "arm-image" "companionpi" {
   iso_checksum              = "sha256:43d150e7901583919e4eb1f0fa83fe0363af2d1e9777a5bb707d696d535e2599"
   iso_url                   = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-07-04/2024-07-04-raspios-bookworm-arm64-lite.img.xz"
   last_partition_extra_size = 2147483648
-  qemu_binary               = "qemu-aarch64-static"
+  #qemu_binary               = "qemu-aarch64-static"
 }
 
 build {
