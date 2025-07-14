@@ -16,11 +16,11 @@ fi
 
 # check if the conversion to v3 is required
 if [ -d "/usr/local/src/companion" ]; then
-    echo "Companion 3.0 is available as a beta, and can be installed on Companion-Pi"
+    echo "Companion 4.0 is available, and can be installed on Companion-Pi"
     echo -e "\e[1;31;40mThis cannot be undone\e[0m"
 
     echo ""
-    echo "You can remain on the 2.x builds until you choose to update. Doing this conversion now will result in running a beta version"
+    echo "You can remain on the 2.x builds until you choose to update. It is strongly recommended to update, as 2.x is very old and the newer versions are much more powerful"
 
     echo ""
     echo "A backup of your configuration will be made for you, which you should take a copy of in case you wish to downgrade"
@@ -35,7 +35,7 @@ if [ -d "/usr/local/src/companion" ]; then
         esac
     }
 
-    echo "Do you want to upgrade your installation to 3.0?"
+    echo "Do you want to upgrade your installation to 4.0?"
     if [[ "yes" == $(ask_yes_or_no "") ]]
     then
         # make copy of config
@@ -120,7 +120,7 @@ else
     fnm default $(fnm current)
     npm --unsafe-perm install -g yarn &>/dev/null
 
-    # TODO - cleanup old versions?
+    # TODO - cleanup old node versions?
 
     # Run interactive version picker
     yarn --cwd "/usr/local/src/companionpi/update-prompt" --silent install
