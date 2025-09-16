@@ -26,7 +26,6 @@ jobs:
           fetch-depth: 0
           submodules: true
           ref: ${{ env.COMPANION_PI_BRANCH }}
-          token: ${{ secrets.BOT_GH_TOKEN }}
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -54,4 +53,3 @@ jobs:
           author: "Companion Bot <companion-module-bot@users.noreply.github.com>"
           add-paths: |
             companionpi.pkr.hcl
-          token: ${{ secrets.BOT_GH_TOKEN }}
