@@ -23,9 +23,9 @@ on:
         default: beta
         required: true
   schedule:
-    - cron:  '0 0 * * SUN'
+    - cron: "0 0 * * SUN"
 
-concurrency: 
+concurrency:
   group: ${{ github.event.inputs.companion-ref || github.ref }}
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
         run: |
           DATE=$(date +"%d-%m-%y")
 
-          echo "sourcename=output-companionpi/image.gz" >> $GITHUB_OUTPUT
+          echo "sourcename=output-companionpi/image.xz" >> $GITHUB_OUTPUT
 
           if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" ]]
           then
@@ -52,15 +52,15 @@ jobs:
             echo "version=${VERSION}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
             echo "branch=beta" >> $GITHUB_OUTPUT
             echo "ref=beta" >> $GITHUB_OUTPUT
-            echo "targetname=companion-pi-beta-${{ github.run_number }}-${DATE}.img.gz" >> $GITHUB_OUTPUT
+            echo "targetname=companion-pi-beta-${{ github.run_number }}-${DATE}.img.xz" >> $GITHUB_OUTPUT
           else
             # Manual stable build. We assume a semver tag was supplied
             echo "version=${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
             echo "branch=stable" >> $GITHUB_OUTPUT
             echo "ref=${{ github.event.inputs.companion-ref }}" >> $GITHUB_OUTPUT
-            echo "targetname=companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.gz" >> $GITHUB_OUTPUT
+            echo "targetname=companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.xz" >> $GITHUB_OUTPUT
           fi
-        
+
       - name: Do build
         uses: ./.github/actions/do-build
         with:
@@ -80,5 +80,5 @@ jobs:
           api-version: ${{ steps.info.outputs.version }}
           api-branch: ${{ steps.info.outputs.branch }}
           api-product: companion-pi
-          api-target: 'linux-img'
+          api-target: "linux-img"
           api-secret: ${{ secrets.BITFOCUS_API_PROJECT_SECRET }}

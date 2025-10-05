@@ -49,4 +49,4 @@ runs:
         sudo zerofree "${device}p2"
         sudo losetup --detach "$device"
 
-        sudo gzip -n image
+        sudo xz -z image
