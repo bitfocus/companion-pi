@@ -1,4 +1,5 @@
 name: CompanionPi Build
+run-name: "CompanionPi Build - ${{ github.event.inputs.companion-ref || 'beta' }}"
 
 permissions: {}
 
