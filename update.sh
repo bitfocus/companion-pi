@@ -164,13 +164,15 @@ cd /usr/local/src/companionpi
 if [ -d "/etc/udev/rules.d/" ]; then
     if [ -f "/opt/companion/50-companion-headless.rules" ]; then
         cp /opt/companion/50-companion-headless.rules /etc/udev/rules.d/50-companion.rules
+        udevadm control --reload-rules || true
     elif [ -f "/opt/companion/50-companion.rules" ]; then
         cp /opt/companion/50-companion.rules /etc/udev/rules.d/50-companion.rules
+        udevadm control --reload-rules || true
     else
-        # fallback to the ones in this repository
-        cp 50-companion.rules /etc/udev/rules.d/
+        # otherwise this is either v2 which doesn't ship any udev rules, or v4.2+ which uses a dynamic method
+        # v2 is so old, we can ignore it
+        echo "Skipping installing of udev rules, Companion 4.2+ uses dynamic rule generation"
     fi
-    udevadm control --reload-rules || true
 else
     echo "Skipping installing of udev rules, as /etc/udev/rules.d/ does not exist"
 fi
@@ -219,6 +221,7 @@ ln -s -f /usr/local/src/companionpi/companion-license /usr/local/bin/companion-l
 ln -s -f /usr/local/src/companionpi/companion-help /usr/local/bin/companion-help
 ln -s -f /usr/local/src/companionpi/companion-update /usr/local/sbin/companion-update
 ln -s -f /usr/local/src/companionpi/companion-reset /usr/local/sbin/companion-reset
+ln -s -f /usr/local/src/companionpi/companion-sync-udev-rules /usr/local/sbin/companion-sync-udev-rules
 
 # install the motd
 ln -s -f /usr/local/src/companionpi/motd /etc/motd 

@@ -7,6 +7,7 @@ Wants=network-online.target
 Type=simple
 User=companion
 Environment=COMPANION_IN_SYSTEMD=1
+Environment=COMPANION_SYNC_UDEV_RULES_COMMAND=sudo /usr/local/sbin/companion-sync-udev-rules
 ExecStart=/usr/local/src/companionpi/launch.sh
 Restart=on-failure
 KillSignal=SIGINT

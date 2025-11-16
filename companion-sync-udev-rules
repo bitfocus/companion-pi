@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo "Must be run as root. Try sudo companion-sync-udev-rules"
+    exit 1
+fi
+
+# Get the companion user's home directory
+ACTUAL_HOME=$(getent passwd "companion" | cut -d: -f6)
+
+# Check the old location first
+CONFIG_DIR="$ACTUAL_HOME/companion"
+if ! [ -d "$CONFIG_DIR" ]; then
+    CONFIG_DIR="$ACTUAL_HOME/.config/companion"
+fi
+
+# Check if the source udev rules file exists
+SOURCE_FILE="$CONFIG_DIR/udev-rules/50-companion-headless.rules"
+if ! [ -f "$SOURCE_FILE" ]; then
+    echo "No udev rules file found. Nothing to sync"
+    exit 1
+fi
+
+cp $SOURCE_FILE /etc/udev/rules.d/50-companion.rules
+
+udevadm control --reload-rules || true
+
+echo "udev rules sync is complete"

@@ -1,1 +1,1 @@
-companion ALL=NOPASSWD: /sbin/reboot, /sbin/shutdown, /sbin/poweroff
+companion ALL=NOPASSWD: /sbin/reboot, /sbin/shutdown, /sbin/poweroff, /usr/local/sbin/companion-sync-udev-rules
