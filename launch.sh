@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Given the new defaut of expecting ipv6 to be enabled, handle its absence
+ADMIN_ADDRESS=""
+inet6=$(/usr/sbin/ip a 2>&1 | grep -c 'inet6')
+if [ $inet6 -eq 0 ]; then
+    ADMIN_ADDRESS="--admin-address 0.0.0.0"
+fi
+
 if [ -d /usr/local/src/companion ]; then
     # Found an old 2.x installation, that must be what is still installed
     cd /usr/local/src/companion
@@ -21,5 +28,5 @@ else
         NODE_EXE=/opt/companion/node-runtimes/main/bin/node
     fi
 
-    $NODE_EXE /opt/companion/main.js --extra-module-path /opt/companion-module-dev
+    $NODE_EXE /opt/companion/main.js --extra-module-path /opt/companion-module-dev $ADMIN_ADDRESS
 fi
