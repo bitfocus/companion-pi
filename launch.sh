@@ -2,7 +2,7 @@
 
 # Given the new defaut of expecting ipv6 to be enabled, handle its absence
 ADMIN_ADDRESS=""
-inet6=$(/usr/sbin/ip a 2>&1 | grep -c 'inet6')
+inet6=$(ip a | grep -c inet6)
 if [ $inet6 -eq 0 ]; then
     ADMIN_ADDRESS="--admin-address 0.0.0.0"
 fi
