@@ -148,7 +148,7 @@ else
         # copy across the useful files
         rm -R -f /opt/companion
         mv /tmp/companion-update/resources /opt/companion
-        mv /tmp/companion-update/*.rules /opt/companion/
+        mv /tmp/companion-update/*.rules /opt/companion/ || true
         rm -R /tmp/companion-update
 
         echo "Finishing"
