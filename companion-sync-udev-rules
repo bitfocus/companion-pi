@@ -12,7 +12,7 @@ ACTUAL_HOME=$(getent passwd "companion" | cut -d: -f6)
 # Check the old location first
 CONFIG_DIR="$ACTUAL_HOME/companion"
 if ! [ -d "$CONFIG_DIR" ]; then
-    CONFIG_DIR="$ACTUAL_HOME/.config/companion"
+    CONFIG_DIR="$ACTUAL_HOME/.config/companion-nodejs"
 fi
 
 # Check if the source udev rules file exists
