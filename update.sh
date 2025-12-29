@@ -169,9 +169,9 @@ if [ -d "/etc/udev/rules.d/" ]; then
         cp /opt/companion/50-companion.rules /etc/udev/rules.d/50-companion.rules
         udevadm control --reload-rules || true
     else
-        # otherwise this is either v2 which doesn't ship any udev rules, or v4.2+ which uses a dynamic method
+        # otherwise this is either v2 which doesn't ship any udev rules, or v4.3+ which uses a dynamic method
         # v2 is so old, we can ignore it
-        echo "Skipping installing of udev rules, Companion 4.2+ uses dynamic rule generation"
+        echo "Skipping installing of udev rules, Companion 4.3+ uses runtime rule generation"
     fi
 else
     echo "Skipping installing of udev rules, as /etc/udev/rules.d/ does not exist"
