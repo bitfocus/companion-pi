@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if IPv6 is avialable on this system
+inet6=$(ip a | grep -c inet6)
+if [ $inet6 -eq 0 ]; then
+    export DISABLE_IPV6="1"
+fi
+
 if [ -d /usr/local/src/companion ]; then
     # Found an old 2.x installation, that must be what is still installed
     cd /usr/local/src/companion
