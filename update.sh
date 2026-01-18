@@ -138,18 +138,18 @@ else
         # download it
         wget "$SELECTED_URL" -O /tmp/companion-update.tar.gz -q  --show-progress
 
-        # extract download
+        # extract only what we need directly to destination
         echo "Extracting..."
-        rm -R -f /tmp/companion-update
-        mkdir /tmp/companion-update
-        tar -xzf /tmp/companion-update.tar.gz --strip-components=1 -C /tmp/companion-update
-        rm /tmp/companion-update.tar.gz
-
-        # copy across the useful files
         rm -R -f /opt/companion
-        mv /tmp/companion-update/resources /opt/companion
-        mv /tmp/companion-update/*.rules /opt/companion/ 2>/dev/null || true
-        rm -R /tmp/companion-update
+        mkdir -p /opt/companion
+        
+        # Extract resources directory
+        tar -xzf /tmp/companion-update.tar.gz --strip-components=2 -C /opt/companion --wildcards '*/resources'
+        
+        # Extract .rules files if they exist
+        tar -xzf /tmp/companion-update.tar.gz --strip-components=1 -C /opt/companion --wildcards '*/*.rules' 2>/dev/null || true
+        
+        rm /tmp/companion-update.tar.gz
 
         echo "Finishing"
     else
