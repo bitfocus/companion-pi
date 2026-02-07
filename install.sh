@@ -17,6 +17,42 @@ echo "This will attempt to install Companion as a system service on this device.
 echo "It is designed to be run on headless servers, but can be used on desktop machines if you are happy to not have the tray icon."
 echo "A user called 'companion' will be created to run the service, and various scripts will be installed to manage the service"
 
+# Check if system is compatible (Debian 12+ or Ubuntu 22.04+ or equivalent)
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    
+    if [ "$ID" = "debian" ]; then
+        if [ "${VERSION_ID%%.*}" -lt 12 ] 2>/dev/null; then
+            echo "Error: This system is running Debian $VERSION_ID."
+            echo "Companion requires Debian 12 (Bookworm) or later."
+            echo "Please upgrade your system before installing Companion."
+            exit 1
+        fi
+    elif [ "$ID" = "ubuntu" ]; then
+        VERSION_NUM=$(echo "$VERSION_ID" | tr -d '.')
+        if [ "$VERSION_NUM" -lt 2204 ] 2>/dev/null; then
+            echo "Error: This system is running Ubuntu $VERSION_ID."
+            echo "Companion requires Ubuntu 22.04 LTS or later."
+            echo "Please upgrade your system before installing Companion."
+            exit 1
+        fi
+    else
+        # For other Debian derivatives, check glibc version without mentioning it
+        GLIBC_VERSION=$(ldd --version 2>/dev/null | head -n1 | grep -oP '\d+\.\d+$' || echo "0.0")
+        GLIBC_MAJOR=$(echo $GLIBC_VERSION | cut -d. -f1)
+        GLIBC_MINOR=$(echo $GLIBC_VERSION | cut -d. -f2)
+        
+        if [ "$GLIBC_MAJOR" -lt 2 ] || ([ "$GLIBC_MAJOR" -eq 2 ] && [ "$GLIBC_MINOR" -lt 36 ]); then
+            echo "Error: Your system version appears to be too old to run Companion."
+            echo "Please ensure you are running:"
+            echo "  - Debian 12 (Bookworm) or later"
+            echo "  - Ubuntu 22.04 LTS or later"
+            echo "  - Or an equivalent recent version of your distribution"
+            exit 1
+        fi
+    fi
+fi
+
 if [ $(/usr/bin/id -u) -ne 0 ]; then
     echo "Must be run as root"
     exit 1
