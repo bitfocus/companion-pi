@@ -6,16 +6,24 @@ if [ ! "$BASH_VERSION" ] ; then
     exit 1
 fi
 
-CURRENT_ARCH=$(dpkg --print-architecture)
-if [[ "$CURRENT_ARCH" != "x64" && "$CURRENT_ARCH" != "amd64" && "$CURRENT_ARCH" != "arm64" ]]; then
-    echo "$CURRENT_ARCH is not a supported cpu architecture for running Companion."
-    echo "If you are running on an arm device (such as a Raspberry Pi), make sure to use an arm64 image."
+# Check if this is a Debian-based system
+if ! command -v apt-get &> /dev/null; then
+    echo "Error: This script is designed for Debian-based systems (Debian, Ubuntu, Raspbian, etc.)"
+    echo "The 'apt-get' package manager was not found on your system."
+    echo "Please use a Debian-based distribution to install Companion."
     exit 1
 fi
 
 echo "This will attempt to install Companion as a system service on this device."
 echo "It is designed to be run on headless servers, but can be used on desktop machines if you are happy to not have the tray icon."
 echo "A user called 'companion' will be created to run the service, and various scripts will be installed to manage the service"
+
+CURRENT_ARCH=$(dpkg --print-architecture)
+if [[ "$CURRENT_ARCH" != "x64" && "$CURRENT_ARCH" != "amd64" && "$CURRENT_ARCH" != "arm64" ]]; then
+    echo "$CURRENT_ARCH is not a supported cpu architecture for running Companion."
+    echo "If you are running on an arm device (such as a Raspberry Pi), make sure to use an arm64 image."
+    exit 1
+fi
 
 # Check if system is compatible (Debian 12+ or Ubuntu 22.04+ or equivalent)
 if [ -f /etc/os-release ]; then
