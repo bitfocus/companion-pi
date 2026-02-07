@@ -25,22 +25,22 @@ if [[ "$CURRENT_ARCH" != "x64" && "$CURRENT_ARCH" != "amd64" && "$CURRENT_ARCH" 
     exit 1
 fi
 
-# Check if system is compatible (Debian 12+ or Ubuntu 22.04+ or equivalent)
+# Check if system is compatible (Debian 11+ or Ubuntu 20.04+ or equivalent)
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     
     if [ "$ID" = "debian" ]; then
-        if [ "${VERSION_ID%%.*}" -lt 12 ] 2>/dev/null; then
+        if [ "${VERSION_ID%%.*}" -lt 11 ] 2>/dev/null; then
             echo "Error: This system is running Debian $VERSION_ID."
-            echo "Companion requires Debian 12 (Bookworm) or later."
+            echo "Companion requires Debian 11 (Bullseye) or later."
             echo "Please upgrade your system before installing Companion."
             exit 1
         fi
     elif [ "$ID" = "ubuntu" ]; then
         VERSION_NUM=$(echo "$VERSION_ID" | tr -d '.')
-        if [ "$VERSION_NUM" -lt 2204 ] 2>/dev/null; then
+        if [ "$VERSION_NUM" -lt 2004 ] 2>/dev/null; then
             echo "Error: This system is running Ubuntu $VERSION_ID."
-            echo "Companion requires Ubuntu 22.04 LTS or later."
+            echo "Companion requires Ubuntu 20.04 LTS or later."
             echo "Please upgrade your system before installing Companion."
             exit 1
         fi
@@ -50,11 +50,11 @@ if [ -f /etc/os-release ]; then
         GLIBC_MAJOR=$(echo $GLIBC_VERSION | cut -d. -f1)
         GLIBC_MINOR=$(echo $GLIBC_VERSION | cut -d. -f2)
         
-        if [ "$GLIBC_MAJOR" -lt 2 ] || ([ "$GLIBC_MAJOR" -eq 2 ] && [ "$GLIBC_MINOR" -lt 36 ]); then
+        if [ "$GLIBC_MAJOR" -lt 2 ] || ([ "$GLIBC_MAJOR" -eq 2 ] && [ "$GLIBC_MINOR" -lt 31 ]); then
             echo "Error: Your system version appears to be too old to run Companion."
             echo "Please ensure you are running:"
-            echo "  - Debian 12 (Bookworm) or later"
-            echo "  - Ubuntu 22.04 LTS or later"
+            echo "  - Debian 11 (Bullseye) or later"
+            echo "  - Ubuntu 20.04 LTS or later"
             echo "  - Or an equivalent recent version of your distribution"
             exit 1
         fi
