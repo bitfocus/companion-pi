@@ -6,7 +6,7 @@ const IMAGING_JSON_URL =
   "https://downloads.raspberrypi.org/os_list_imagingutility_v4.json";
 
 const hclPath = fileURLToPath(
-  new URL("../companionpi.pkr.hcl", import.meta.url)
+  new URL("../companionpi.pkr.hcl", import.meta.url),
 );
 
 function normalizeChecksum(raw) {
@@ -90,7 +90,7 @@ function replaceHclValues(hclStr, newUrl, newChecksum) {
   return out;
 }
 
-// Usage: node tools/update_raspbian_image.mjs [--dry-run|-n] [--help]
+// Usage: node tools/update_rpi_os_image.mjs [--dry-run|-n] [--help]
 //
 // Fetches the Raspberry Pi imaging utility JSON and updates
 // `companionpi.pkr.hcl` `iso_url` and `iso_checksum` fields.
@@ -98,10 +98,10 @@ function replaceHclValues(hclStr, newUrl, newChecksum) {
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
   console.log(
-    "Usage: node tools/update_raspbian_image.mjs [--dry-run|-n] [--help]"
+    "Usage: node tools/update_rpi_os_image.mjs [--dry-run|-n] [--help]",
   );
   console.log(
-    "Fetch imaging JSON and update companionpi.pkr.hcl with latest raspios_lite_arm64 image and checksum."
+    "Fetch imaging JSON and update companionpi.pkr.hcl with latest raspios_lite_arm64 image and checksum.",
   );
   process.exit(0);
 }
@@ -120,7 +120,7 @@ console.log(`Found ${apiImagesList.length} items in imaging list`);
 const chosenImage = await findImage(apiImagesList);
 if (!chosenImage)
   throw new Error(
-    "No suitable raspios_lite_arm64 candidates found in imaging JSON"
+    "No suitable raspios_lite_arm64 candidates found in imaging JSON",
   );
 
 console.log("Found image:", chosenImage.url, chosenImage.sha);
