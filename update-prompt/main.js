@@ -11,7 +11,7 @@ if (process.env.NODE_USE_ENV_PROXY) {
 	setGlobalDispatcher(envHttpProxyAgent)
 }
 
-const ALLOWED_VERSIONS = '^3.0.0-0 || ^4.0.0-0 || ^4.0.0'
+const ALLOWED_VERSIONS = '^3.0.0-0 || ^4.0.0-0 || ^4.0.0 || ^5.0.0-0 || ^5.0.0'
 
 let currentVersion
 try {
