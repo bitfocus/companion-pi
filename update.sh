@@ -81,74 +81,13 @@ if [ -d "/usr/local/src/companion" ]; then
 fi
 
 if [ -d "/usr/local/src/companion" ]; then
-    # staying with v2
-
-    # legacy v2.x still relies on fnm (already present on disk on these machines)
-    # imitate the fnm setup done in .bashrc
-    export FNM_DIR=/opt/fnm
-    export PATH=/opt/fnm:$PATH
-    eval "`fnm env`"
-
-    # update companion soruce
-    cd /usr/local/src/companion
-    git fetch --all -q
-
-    # The version can be the first argument, or we can prompt for it
-    SELECTED_REF=$1
-    if [ -z "$SELECTED_REF" ]; then
-        # Run interactive version picker
-        yarn --cwd "/usr/local/src/companionpi/update-prompt-2.4" install
-        node "/usr/local/src/companionpi/update-prompt-2.4/main.js"
-
-        # Get result
-        if [ -f /tmp/companion-version-selection ]; then
-            SELECTED_REF=$(cat /tmp/companion-version-selection)
-            rm /tmp/companion-version-selection 2&>/dev/null || true
-        fi
-    fi
-
-    if [ -n "$SELECTED_REF" ]; then 
-        # companion is not safe to be started
-        touch /usr/local/src/companion/UPDATE_IN_PROGRESS
-
-        echo "Switching to $SELECTED_REF"
-
-        # switch to the new ref
-        git checkout $SELECTED_REF
-        GIT_BRANCH=$(git branch --show-current)
-        if [[ "$GIT_BRANCH" != "" ]]; then
-            # only do a pull if on a branch
-            git pull -q
-        fi
-
-        # update the node version
-        fnm use --install-if-missing
-        fnm default $(fnm current)
-        npm --unsafe-perm install -g yarn
-
-        # make sure there is a swap file in case there is not enough memory
-        SWAPFILE="/swapfile-upgrade"
-        if [ ! -f "$SWAPFILE" ]; then
-            fallocate -l 2G $SWAPFILE
-            chmod 600 $SWAPFILE
-            mkswap $SWAPFILE
-        fi
-        swapon $SWAPFILE || true
-
-        # install dependencies
-        yarn config set network-timeout 100000 -g
-        export NODE_OPTIONS=--max-old-space-size=8192 # some pi's run out of memory
-        yarn update
-
-        # swap is no longer needed
-        swapoff $SWAPFILE || true
-
-        # companion is safe to be started
-        rm /usr/local/src/companion/UPDATE_IN_PROGRESS || true
-
-    else
-        echo "Skipping update"
-    fi
+    # An old 2.x install is present and the user chose not to upgrade above.
+    # Updating within 2.x is no longer supported (it is years old and no longer
+    # builds), so there is nothing to do - the existing install is left untouched
+    # and keeps running via launch.sh. The only path forward is the in-place
+    # upgrade to a modern version offered above.
+    echo "Keeping your existing Companion 2.x installation unchanged."
+    echo "Updating to a different 2.x version is no longer supported - re-run and choose to upgrade when you are ready to move to a modern version."
 else
     # proceed with v3
 
@@ -206,6 +145,8 @@ cd /usr/local/src/companionpi
 
 # the update-prompt picker is now python; remove any node_modules left behind
 rm -rf /usr/local/src/companionpi/update-prompt/node_modules
+# the 2.4 picker has been removed entirely
+rm -rf /usr/local/src/companionpi/update-prompt-2.4
 
 # copy the best option for udev rules
 if [ -d "/etc/udev/rules.d/" ]; then
