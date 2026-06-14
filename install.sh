@@ -73,20 +73,13 @@ COMPANION_BUILD="${COMPANION_BUILD:-beta}"
 COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
 
 # install some dependencies
+# python3 is used by the update version picker (update-prompt/main.py)
 apt-get update
-apt-get install -yq git zip unzip curl libusb-1.0-0-dev libudev-dev adduser wget
+apt-get install -yq git zip unzip curl libusb-1.0-0-dev libudev-dev adduser wget python3
 apt-get clean
 
 # add a system user, if the user doesn't already exist
 id -u companion &>/dev/null || adduser --disabled-password companion --gecos ""
-
-# install fnm to manage node version
-# we do this to /opt/fnm, so that the companion user can use the same installation
-export FNM_DIR=/opt/fnm
-echo "export FNM_DIR=/opt/fnm" >> /root/.bashrc
-curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir /opt/fnm &>/dev/null
-export PATH=/opt/fnm:$PATH
-eval "`fnm env --shell bash`"
 
 # clone the companionpi repository
 rm -R /usr/local/src/companionpi &>/dev/null || true
@@ -103,15 +96,8 @@ else
     ./update.sh stable "$COMPANION_BUILD"
 fi
 
-# install update script dependencies, as they were ignored
-yarn --cwd "/usr/local/src/companionpi/update-prompt" install
-
 # enable start on boot
 systemctl enable companion
-
-# add the fnm node to this users path
-# TODO - verify permissions
-echo "export PATH=/opt/fnm/aliases/default/bin:\$PATH" >> /home/companion/.bashrc
 
 # check that a build of companion was installed
 if [ ! -d "/opt/companion" ] 

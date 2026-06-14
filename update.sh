@@ -40,11 +40,6 @@ if [ -f /etc/os-release ]; then
     fi
 fi
 
-# imitiate the fnm setup done in .bashrc
-export FNM_DIR=/opt/fnm
-export PATH=/opt/fnm:$PATH
-eval "`fnm env`"
-
 # ensure the module dev folder exists
 if [ ! -d /opt/companion-module-dev ]; then
     mkdir /opt/companion-module-dev
@@ -87,6 +82,12 @@ fi
 
 if [ -d "/usr/local/src/companion" ]; then
     # staying with v2
+
+    # legacy v2.x still relies on fnm (already present on disk on these machines)
+    # imitate the fnm setup done in .bashrc
+    export FNM_DIR=/opt/fnm
+    export PATH=/opt/fnm:$PATH
+    eval "`fnm env`"
 
     # update companion soruce
     cd /usr/local/src/companion
@@ -150,17 +151,24 @@ if [ -d "/usr/local/src/companion" ]; then
     fi
 else
     # proceed with v3
-        
-    # update the node version
-    fnm use --install-if-missing --silent-if-unchanged
-    fnm default $(fnm current)
-    npm --unsafe-perm install -g yarn &>/dev/null
 
-    # TODO - cleanup old node versions?
+    # the picker is a python3 script (stdlib only). Existing machines only ever run
+    # update.sh (never install.sh), so make sure python3 is present here too.
+    if ! command -v python3 >/dev/null 2>&1; then
+        apt-get install -yq python3
+    fi
+
+    # fnm is no longer used by the modern flow. Purge it (and the shell hooks it
+    # added) when present. The existence guard means we only ever touch the .bashrc
+    # files once, so a user who later installs their own fnm is left alone.
+    if [ -d /opt/fnm ]; then
+        rm -rf /opt/fnm
+        sed -i '/fnm/d; /FNM_DIR/d' /root/.bashrc 2>/dev/null || true
+        sed -i '/fnm/d; /FNM_DIR/d' /home/companion/.bashrc 2>/dev/null || true
+    fi
 
     # Run interactive version picker
-    yarn --cwd "/usr/local/src/companionpi/update-prompt" --silent install
-    node "/usr/local/src/companionpi/update-prompt/main.js" $1 $2
+    python3 "/usr/local/src/companionpi/update-prompt/main.py" $1 $2
 
     # Get result
     if [ -f /tmp/companion-version-selection ]; then
