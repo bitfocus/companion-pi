@@ -204,6 +204,9 @@ fi
 # update some tooling
 cd /usr/local/src/companionpi
 
+# the update-prompt picker is now python; remove any node_modules left behind
+rm -rf /usr/local/src/companionpi/update-prompt/node_modules
+
 # copy the best option for udev rules
 if [ -d "/etc/udev/rules.d/" ]; then
     if [ -f "/opt/companion/50-companion-headless.rules" ]; then
