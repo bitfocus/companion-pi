@@ -21,6 +21,10 @@ else
     # No 2.x, so we can assume its modern!
     cd /opt/companion
 
+    # Preserve prior behaviour until we have a config tool
+    export COMPANION_ENABLE_SHELL_COMMAND_SUPPORT=1
+    export COMPANION_ENABLE_RESTRICTED_MODULES=1
+
     # node binary path could be different since v3.5
     NODE_EXE=/opt/companion/node-runtime/bin/node
     if ! [ -d /opt/companion/node-runtime ]; then
