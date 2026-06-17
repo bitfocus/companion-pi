@@ -14,8 +14,27 @@ fi
 
 export COMPANION_CONFIG_FILE=/etc/companion/config.yaml
 
+config_checksum() {
+    md5sum "$COMPANION_CONFIG_FILE" 2>/dev/null || true
+}
+
+before=$(config_checksum)
+
 /opt/companion/node-runtimes/main/bin/node /opt/companion/config-tool.js edit
 
+after=$(config_checksum)
+
+if [ "$before" == "$after" ]; then
+    echo ""
+    echo "No changes made."
+    exit 0
+fi
+
 echo ""
-echo "Restart Companion to apply any changes:"
-echo "  $ sudo systemctl restart companion"
+if systemctl is-active --quiet companion; then
+    echo "Applying changes by restarting Companion..."
+    systemctl restart companion
+else
+    echo "Changes saved. They will apply the next time Companion starts:"
+    echo "  $ sudo systemctl start companion"
+fi
