@@ -21,9 +21,6 @@ else
     # No 2.x, so we can assume its modern!
     cd /opt/companion
 
-    # Preserve prior behaviour until we have a config tool
-    export COMPANION_ENABLE_SHELL_COMMAND_SUPPORT=1
-    export COMPANION_ENABLE_RESTRICTED_MODULES=1
 
     # node binary path could be different since v3.5
     NODE_EXE=/opt/companion/node-runtime/bin/node
@@ -31,5 +28,19 @@ else
         NODE_EXE=/opt/companion/node-runtimes/main/bin/node
     fi
 
-    $NODE_EXE /opt/companion/main.js --extra-module-path /opt/companion-module-dev
+    if [ -f /opt/companion/config-tool.js ]; then
+        # New releases: derive env + flags from the config file.
+        # `generate` runs in a subshell and exits; `exec` then replaces this
+        # script, so the final process tree is just `node main.js`.
+        export COMPANION_CONFIG_FILE=/etc/companion/config.yaml
+        source <($NODE_EXE /opt/companion/config-tool.js generate)
+
+        exec $NODE_EXE /opt/companion/main.js "$@"
+    else
+        # Older releases (no config-tool): existing behaviour, unchanged.
+        export COMPANION_ENABLE_SHELL_COMMAND_SUPPORT=1
+        export COMPANION_ENABLE_RESTRICTED_MODULES=1
+        
+        exec $NODE_EXE /opt/companion/main.js --extra-module-path /opt/companion-module-dev "$@"
+    fi
 fi

@@ -200,6 +200,25 @@ if [ ! -d "/home/companion/.config/companion-nodejs" ]; then
     fi
 fi
 
+# Seed/refresh the launch config file (new releases ship a config-tool).
+# `init` is idempotent: it creates the file with commented defaults on first
+# run, and on later updates appends only newly-introduced options, preserving
+# the user's existing values, comments and any unknown keys. `--set` only
+# supplies the initial value when an option is first written, so it is safe to
+# run on every update. Older releases (no config-tool) skip this and keep using
+# the hard-coded flags in launch.sh.
+if [ -f /opt/companion/config-tool.js ]; then
+    NODE_EXE=/opt/companion/node-runtime/bin/node
+    if ! [ -d /opt/companion/node-runtime ]; then
+        NODE_EXE=/opt/companion/node-runtimes/main/bin/node
+    fi
+
+    install -d -o root -g root -m 0755 /etc/companion
+    COMPANION_CONFIG_FILE=/etc/companion/config.yaml \
+        "$NODE_EXE" /opt/companion/config-tool.js init \
+        --set extraModulePath=/opt/companion-module-dev
+fi
+
 # update startup script
 cp companion.service /etc/systemd/system
 systemctl daemon-reload
@@ -208,6 +227,7 @@ systemctl daemon-reload
 ln -s -f /usr/local/src/companionpi/companion-license /usr/local/bin/companion-license
 ln -s -f /usr/local/src/companionpi/companion-help /usr/local/bin/companion-help
 ln -s -f /usr/local/src/companionpi/companion-update /usr/local/sbin/companion-update
+ln -s -f /usr/local/src/companionpi/companion-config /usr/local/sbin/companion-config
 ln -s -f /usr/local/src/companionpi/companion-reset /usr/local/sbin/companion-reset
 ln -s -f /usr/local/src/companionpi/companion-sync-udev-rules /usr/local/sbin/companion-sync-udev-rules
 

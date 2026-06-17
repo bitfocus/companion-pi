@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo "Must be run as root. Try sudo companion-config"
+    exit 1
+fi
+
+if [ ! -f /opt/companion/config-tool.js ]; then
+    echo "The installed version of Companion does not support the configuration tool."
+    echo "Update to a newer version with 'sudo companion-update' first."
+    exit 1
+fi
+
+export COMPANION_CONFIG_FILE=/etc/companion/config.yaml
+
+/opt/companion/node-runtimes/main/bin/node /opt/companion/config-tool.js edit
+
+echo ""
+echo "Restart Companion to apply any changes:"
+echo "  $ sudo systemctl restart companion"

@@ -13,6 +13,11 @@ echo "  $ sudo companion-update"
 echo "and follow the prompts"
 echo ""
 
+echo "To edit the companion launch configuration run:"
+echo "  $ sudo companion-config"
+echo "then restart companion to apply any changes"
+echo ""
+
 echo "To reset the companion configuration run:"
 echo "  $ sudo companion-reset"
 echo "and follow the prompts"
