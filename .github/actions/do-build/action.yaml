@@ -9,6 +9,10 @@ inputs:
     description: ""
     required: false
     default: ""
+outputs:
+  companion-version:
+    description: "The Companion version installed in the built image (contents of /opt/companion/BUILD)"
+    value: ${{ steps.compress.outputs.companion-version }}
 env:
   PACKER_CACHE_DIR: /tmp/packer_cache
 runs:
@@ -40,12 +44,25 @@ runs:
         PACKER_GITHUB_API_TOKEN: ${{ inputs.PACKER_GITHUB_API_TOKEN }}
 
     - name: compress image
+      id: compress
       shell: bash
       run: |
         cd output-companionpi
 
         sudo apt-get install -y zerofree
         device="$(sudo losetup --partscan --show --find image)"
+
+        # Extract the installed Companion version from the image, so builds can be
+        # named by their actual version instead of a placeholder. `p2` is the root
+        # partition, and /opt/companion/BUILD holds the version string.
+        sudo mkdir -p /mnt/companion-image
+        sudo mount "${device}p2" /mnt/companion-image
+        COMPANION_VERSION="$(sudo cat /mnt/companion-image/opt/companion/BUILD | tr -d '\r\n')"
+        echo "Extracted Companion version: ${COMPANION_VERSION}"
+        echo "companion-version=${COMPANION_VERSION}" >> "$GITHUB_OUTPUT"
+        sudo umount /mnt/companion-image
+
+        # zerofree requires the filesystem to be unmounted (done above)
         sudo zerofree "${device}p2"
         sudo losetup --detach "$device"
 

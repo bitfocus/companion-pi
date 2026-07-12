@@ -47,42 +47,61 @@ jobs:
         run: |
           DATE=$(date +"%d-%m-%y")
 
+          echo "date=${DATE}" >> $GITHUB_OUTPUT
           echo "sourcename=output-companionpi/image.xz" >> $GITHUB_OUTPUT
 
           if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" ]]
           then
             # Automatic beta build
-            VERSION="0.0.0"
-            echo "version=${VERSION}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
             echo "branch=beta" >> $GITHUB_OUTPUT
             echo "ref=beta" >> $GITHUB_OUTPUT
-            echo "targetname=companion-pi-beta-${{ github.run_number }}-${DATE}.img.xz" >> $GITHUB_OUTPUT
           else
             # Manual stable build. We assume a semver tag was supplied
-            echo "version=${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
             echo "branch=stable" >> $GITHUB_OUTPUT
             echo "ref=${{ github.event.inputs.companion-ref }}" >> $GITHUB_OUTPUT
-            echo "targetname=companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.xz" >> $GITHUB_OUTPUT
           fi
 
       - name: Do build
+        id: build
         uses: ./.github/actions/do-build
         with:
           companion-ref: ${{ steps.info.outputs.ref }}
           PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine artifact names
+        id: names
+        shell: bash
+        run: |
+          DATE="${{ steps.info.outputs.date }}"
+
+          if [[ "${{ steps.info.outputs.branch }}" == "beta" ]]
+          then
+            # Name beta builds by the actual Companion version installed in the image
+            # (e.g. 5.0.0+9502-main-<hash>), extracted from /opt/companion/BUILD.
+            # The run number is appended to guarantee a unique filename even if two
+            # nightly builds install the same Companion version.
+            VERSION="${{ steps.build.outputs.companion-version }}"
+            # Sanitise the version for use in a filename ('+' -> '-', drop anything else)
+            SAFE_VERSION="$(echo "${VERSION}" | tr '+' '-' | tr -cd 'A-Za-z0-9._-')"
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "targetname=companion-pi-beta-${SAFE_VERSION}-${{ github.run_number }}.img.xz" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
+            echo "targetname=companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.xz" >> $GITHUB_OUTPUT
+          fi
 
       - name: Upload build (beta)
         uses: bitfocus/actions/upload-and-notify-for-branch@main
         if: ${{ github.repository_owner == 'bitfocus' && steps.info.outputs.branch == 'beta' }}
         with:
           source-filename: ${{ steps.info.outputs.sourcename }}
-          destination-filename: ${{ steps.info.outputs.targetname }}
+          destination-filename: ${{ steps.names.outputs.targetname }}
           s3-host: ${{ vars.S3_HOST }}
           s3-bucket: ${{ vars.S3_BUCKET }}
           s3-access-key: ${{ secrets.S3_KEY }}
           s3-secret-key: ${{ secrets.S3_SECRET }}
 
-          api-version: ${{ steps.info.outputs.version }}
+          api-version: ${{ steps.names.outputs.version }}
           api-branch: 'beta'
           api-product: ${{ env.API_PRODUCT }}
           api-target: "linux-img"
@@ -93,7 +112,7 @@ jobs:
         if: ${{ github.repository_owner == 'bitfocus' && steps.info.outputs.branch == 'stable' }}
         with:
           source-filename: ${{ steps.info.outputs.sourcename }}
-          destination-filename: ${{ steps.info.outputs.targetname }}
+          destination-filename: ${{ steps.names.outputs.targetname }}
           s3-host: ${{ vars.RELEASE_S3_HOST }}
           s3-bucket: ${{ vars.RELEASE_S3_BUCKET }}/${{ env.API_PRODUCT }}
           s3-access-key: ${{ secrets.RELEASE_S3_KEY }}
@@ -101,7 +120,7 @@ jobs:
 
           public-bucket-url: ${{ vars.RELEASE_S3_URL }}/${{ env.API_PRODUCT }}
 
-          api-version: ${{ steps.info.outputs.version }}
+          api-version: ${{ steps.names.outputs.version }}
           api-branch: 'stable'
           api-product: ${{ env.API_PRODUCT }}
           api-target: "linux-img"
