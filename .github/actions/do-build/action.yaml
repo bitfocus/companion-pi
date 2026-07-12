@@ -30,7 +30,7 @@ runs:
         echo "CACHE_KEY=${CACHE_KEY}" >> "$GITHUB_OUTPUT"
 
     - name: Restore image cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: /tmp/packer_cache
         key: ${{ steps.install-packer.outputs.CACHE_KEY }}
