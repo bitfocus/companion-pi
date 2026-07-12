@@ -66,9 +66,13 @@ if [ $(/usr/bin/id -u) -ne 0 ]; then
     exit 1
 fi
 
-# Install a specific stable build. It is advised to not use this, as attempting to install a build that doesn't
-# exist can leave your system in a broken state that needs fixing manually
-COMPANION_BUILD="${COMPANION_BUILD:-beta}"
+# Which build to install:
+#   stable  (default) - the latest stable release
+#   beta              - the latest beta build
+#   <version>         - a specific stable version (e.g. 4.3.4). Advised against, as
+#                       attempting to install a build that doesn't exist can leave
+#                       your system in a broken state that needs fixing manually
+COMPANION_BUILD="${COMPANION_BUILD:-stable}"
 # Development only: Allow building using a testing branch of this updater
 COMPANIONPI_BRANCH="${COMPANIONPI_BRANCH:-main}"
 
@@ -92,6 +96,8 @@ git config --global pull.rebase false
 # run the update script
 if [ "$COMPANION_BUILD" == "beta" ] || [ "$COMPANION_BUILD" == "experimental" ]; then
     ./update.sh beta
+elif [ "$COMPANION_BUILD" == "stable" ]; then
+    ./update.sh stable
 else
     ./update.sh stable "$COMPANION_BUILD"
 fi
