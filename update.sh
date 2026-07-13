@@ -186,6 +186,7 @@ ensure_installed() {
   fi
 }
 ensure_installed "libfontconfig1" # for the new canvas in 3.2
+ensure_installed "libatomic1" # required by nodejs 26
 if apt-get --simulate -qq install libasound2 &>/dev/null; then
     ensure_installed "libasound2" # for generic-midi
 else
