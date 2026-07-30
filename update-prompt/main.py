@@ -201,10 +201,17 @@ def confirm(message):
 
 def select_build_of_type(build_type, target_build=None):
     """Non-interactive: pick the requested (or newest) build of a branch."""
-    candidates = get_latest_builds(build_type, 1)
     selected = None
+    candidates = get_latest_builds(build_type, 30 if target_build else 1) #We fetch 30 Builds to find the target build
     if target_build:
-        selected = next((c for c in candidates if c["name"] == target_build), None)
+        selected = next(
+            (
+                c for c in candidates
+                if str(c["name"]).lstrip("vV")
+                == str(target_build).lstrip("vV")
+            ),
+            None,
+        )
     elif candidates:
         selected = candidates[0]
 
