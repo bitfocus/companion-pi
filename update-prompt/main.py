@@ -201,15 +201,22 @@ def confirm(message):
 
 def select_build_of_type(build_type, target_build=None):
     """Non-interactive: pick the requested (or newest) build of a branch."""
-    candidates = get_latest_builds(build_type, 1)
     selected = None
+    candidates = get_latest_builds(build_type, 30 if target_build else 1) #We fetch 30 Builds to find the target build
     if target_build:
-        selected = next((c for c in candidates if c["name"] == target_build), None)
+        selected = next(
+            (
+                c for c in candidates
+                if str(c["name"]).lstrip("vV")
+                == str(target_build).lstrip("vV")
+            ),
+            None,
+        )
     elif candidates:
         selected = candidates[0]
 
     if selected:
-        if selected["name"] == get_current_version():
+        if str(selected["name"]).lstrip("vV") == str(get_current_version()).lstrip("vV"):
             print(
                 "The latest build of {} ({}) is already installed".format(
                     build_type, selected["name"]
@@ -238,7 +245,7 @@ def choose_of_type(build_type):
         print("No version was selected!", file=sys.stderr)
         return
 
-    if choice == get_current_version():
+    if str(choice).lstrip("vV") == str(get_current_version()).lstrip("vV"):
         if not confirm(
             'Build "{}" is already installed. Do you wish to reinstall it?'.format(
                 choice
