@@ -4,7 +4,10 @@ run-name: "CompanionPi Build - ${{ github.event.inputs.companion-ref || 'beta' }
 permissions: {}
 
 env:
-  API_PRODUCT: companion-pi
+  # Images are registered as a build target of the main Companion product, so they
+  # appear alongside the regular Companion builds of the same version
+  API_PRODUCT: companion
+  API_TARGET: linux-img
 
 on:
   push:
@@ -44,21 +47,20 @@ jobs:
       - name: Determine build details
         id: info
         shell: bash
+        env:
+          INPUT_REF: ${{ github.event.inputs.companion-ref }}
         run: |
-          DATE=$(date +"%d-%m-%y")
-
-          echo "date=${DATE}" >> $GITHUB_OUTPUT
           echo "sourcename=output-companionpi/image.xz" >> $GITHUB_OUTPUT
 
-          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" ]]
+          if [[ -z "${INPUT_REF}" || "${INPUT_REF}" == "beta" ]]
           then
-            # Automatic beta build
+            # Automatic (or manually triggered) beta build
             echo "branch=beta" >> $GITHUB_OUTPUT
             echo "ref=beta" >> $GITHUB_OUTPUT
           else
             # Manual stable build. We assume a semver tag was supplied
             echo "branch=stable" >> $GITHUB_OUTPUT
-            echo "ref=${{ github.event.inputs.companion-ref }}" >> $GITHUB_OUTPUT
+            echo "ref=${INPUT_REF}" >> $GITHUB_OUTPUT
           fi
 
       - name: Do build
@@ -71,24 +73,37 @@ jobs:
       - name: Determine artifact names
         id: names
         shell: bash
+        env:
+          BRANCH: ${{ steps.info.outputs.branch }}
+          REF: ${{ steps.info.outputs.ref }}
+          # The Companion version installed in the image (contents of /opt/companion/BUILD),
+          # eg 5.0.0+9502-main-<hash>. This is the same string Companion reports for its own builds
+          BUILD: ${{ steps.build.outputs.companion-version }}
         run: |
-          DATE="${{ steps.info.outputs.date }}"
-
-          if [[ "${{ steps.info.outputs.branch }}" == "beta" ]]
-          then
-            # Name beta builds by the actual Companion version installed in the image
-            # (e.g. 5.0.0+9502-main-<hash>), extracted from /opt/companion/BUILD.
-            # The run number is appended to guarantee a unique filename even if two
-            # nightly builds install the same Companion version.
-            VERSION="${{ steps.build.outputs.companion-version }}"
-            # Sanitise the version for use in a filename ('+' -> '-', drop anything else)
-            SAFE_VERSION="$(echo "${VERSION}" | tr '+' '-' | tr -cd 'A-Za-z0-9._-')"
-            echo "version=${VERSION}" >> $GITHUB_OUTPUT
-            echo "targetname=companion-pi-beta-${SAFE_VERSION}-${{ github.run_number }}.img.xz" >> $GITHUB_OUTPUT
-          else
-            echo "version=${{ github.event.inputs.companion-ref }}+${{ github.run_number }}-${DATE}" >> $GITHUB_OUTPUT
-            echo "targetname=companion-pi-stable-${{ github.event.inputs.companion-ref }}-${DATE}.img.xz" >> $GITHUB_OUTPUT
+          if [[ -z "${BUILD}" ]]; then
+            echo "Failed to determine the Companion version in the image"
+            exit 1
           fi
+
+          if [[ "${BRANCH}" == "beta" ]]
+          then
+            # Matches the version Companion registers for its beta builds
+            echo "version=${BUILD}" >> $GITHUB_OUTPUT
+          else
+            # Companion registers stable builds by their tag name, so match that.
+            # Guard against registering an image under the wrong release
+            if [[ "${BUILD}" != "${REF#v}+"* ]]; then
+              echo "Image contains Companion ${BUILD}, which does not match tag ${REF}"
+              exit 1
+            fi
+            echo "version=${REF}" >> $GITHUB_OUTPUT
+          fi
+
+          # Sanitise the version for use in a filename ('+' -> '-', drop anything else).
+          # The run number keeps the filename unique when an image is rebuilt for the same
+          # Companion version (eg for an updated Raspberry Pi OS base image)
+          SAFE_BUILD="$(echo "${BUILD}" | tr '+' '-' | tr -cd 'A-Za-z0-9._-')"
+          echo "targetname=companion-pi-${BRANCH}-${SAFE_BUILD}-${{ github.run_number }}.img.xz" >> $GITHUB_OUTPUT
 
       - name: Upload build (beta)
         uses: bitfocus/actions/upload-and-notify-for-branch@main
@@ -104,7 +119,7 @@ jobs:
           api-version: ${{ steps.names.outputs.version }}
           api-branch: 'beta'
           api-product: ${{ env.API_PRODUCT }}
-          api-target: "linux-img"
+          api-target: ${{ env.API_TARGET }}
           api-secret: ${{ secrets.BITFOCUS_API_PROJECT_SECRET }}
 
       - name: Upload build (stable)
@@ -123,5 +138,5 @@ jobs:
           api-version: ${{ steps.names.outputs.version }}
           api-branch: 'stable'
           api-product: ${{ env.API_PRODUCT }}
-          api-target: "linux-img"
+          api-target: ${{ env.API_TARGET }}
           api-secret: ${{ secrets.BITFOCUS_API_PROJECT_SECRET }}
